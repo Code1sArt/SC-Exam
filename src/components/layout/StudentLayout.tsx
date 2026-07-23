@@ -1,7 +1,6 @@
 import {
   BarChart3,
   BookOpenCheck,
-  GraduationCap,
   Home,
   LogOut,
   NotebookPen,
@@ -52,9 +51,7 @@ export function StudentLayout({
             onClick={() => onPage("dashboard")}
             aria-label="ไปหน้าหลัก"
           >
-            <span className="grid size-9 place-items-center rounded-lg bg-[#176b55] text-white">
-              <GraduationCap size={20} />
-            </span>
+            <img className="size-9 object-contain" src="/lab-edu-logo.png" alt="" />
             <span className="hidden text-base font-bold sm:block">Lab EDU</span>
           </button>
           <nav className="mx-auto hidden h-full items-center gap-1 md:flex">
