@@ -1,0 +1,136 @@
+name: CI/CD to Plesk
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: "22"
+
+jobs:
+  ci:
+    name: Build and lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build production site
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://api.labedu.tech/api/v1' }}
+        run: npm run build
+
+      - name: Upload production artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: student-panel-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy:
+    name: Deploy production
+    if: >-
+      github.event_name != 'pull_request' &&
+      github.ref == 'refs/heads/main' &&
+      vars.PLESK_DEPLOY_ENABLED == 'true'
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: production
+      url: https://labedu.tech
+    concurrency:
+      group: student-panel-plesk-production
+      cancel-in-progress: false
+    env:
+      PLESK_HOST: "118.27.146.122"
+      PLESK_PORT: ${{ vars.PLESK_SSH_PORT || '22' }}
+      PLESK_USER: "admin_lebedu"
+      PLESK_DOCUMENT_ROOT: "/var/www/vhosts/labedu.tech/httpdocs"
+      PRODUCTION_URL: "https://labedu.tech"
+
+    steps:
+      - name: Download production artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: student-panel-${{ github.sha }}
+          path: dist
+
+      - name: Validate deployment secrets
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PLESK_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.PLESK_SSH_KNOWN_HOSTS }}
+        run: |
+          set -eu
+          for variable_name in SSH_PRIVATE_KEY SSH_KNOWN_HOSTS; do
+            eval "variable_value=\${$variable_name:-}"
+            if [ -z "$variable_value" ]; then
+              echo "::error::$variable_name is not configured"
+              exit 1
+            fi
+          done
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PLESK_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.PLESK_SSH_KNOWN_HOSTS }}
+        run: |
+          set -eu
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "$SSH_PRIVATE_KEY" > "$HOME/.ssh/plesk_deploy"
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/plesk_deploy" "$HOME/.ssh/known_hosts"
+
+      - name: Deploy static site
+        run: |
+          set -eu
+          SSH_COMMAND="ssh -i $HOME/.ssh/plesk_deploy -p $PLESK_PORT -o BatchMode=yes -o StrictHostKeyChecking=yes"
+
+          $SSH_COMMAND "$PLESK_USER@$PLESK_HOST" \
+            "test -d '$PLESK_DOCUMENT_ROOT' && test -w '$PLESK_DOCUMENT_ROOT'"
+
+          rsync \
+            --archive \
+            --compress \
+            --delete \
+            --delay-updates \
+            --exclude ".well-known/" \
+            --rsh "$SSH_COMMAND" \
+            dist/ \
+            "$PLESK_USER@$PLESK_HOST:$PLESK_DOCUMENT_ROOT/"
+
+      - name: Verify production
+        run: |
+          set -u
+          for attempt in 1 2 3 4 5 6; do
+            if curl --fail --silent --show-error --location \
+              --max-time 20 "$PRODUCTION_URL/" > /dev/null; then
+              echo "Production is healthy: $PRODUCTION_URL"
+              exit 0
+            fi
+            echo "Health check attempt $attempt failed; retrying in 10 seconds"
+            sleep 10
+          done
+          echo "::error::Production health check failed: $PRODUCTION_URL"
+          exit 1

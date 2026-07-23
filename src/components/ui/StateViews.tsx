@@ -1,0 +1,5 @@
+import { BookOpenCheck, GraduationCap, LoaderCircle } from "lucide-react";
+
+export function AppLoading() { return <main className="grid min-h-screen place-content-center justify-items-center gap-4 bg-[#f5f8f6] text-[#176b55]"><GraduationCap size={42} /><span className="text-sm font-semibold text-[#71847d]">กำลังเตรียมพื้นที่ของคุณ...</span></main>; }
+export function LoadingBlock() { return <div className="grid min-h-72 place-content-center justify-items-center gap-3 text-[#879890]"><LoaderCircle className="animate-spin text-[#176b55]" /><span className="text-xs">กำลังโหลดข้อมูล...</span></div>; }
+export function EmptyState({ title, text }: { title: string; text: string }) { return <div className="grid min-h-64 place-content-center justify-items-center rounded-lg border border-dashed border-[#c9d9d2] bg-white p-8 text-center"><span className="grid size-12 place-items-center rounded-lg bg-[#dff1ea] text-[#176b55]"><BookOpenCheck /></span><h3 className="mt-4 font-bold">{title}</h3><p className="mt-1 max-w-sm text-xs leading-6 text-[#71847d]">{text}</p></div>; }
