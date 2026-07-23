@@ -20,7 +20,7 @@ import type { AssignmentSubmitPayload, StudentAssignment } from "./types/assignm
 import type { AttemptResult, PageKey, StudentExam } from "./types/exam";
 import type { LearningRecords } from "./types/record";
 
-const TOKEN_KEY = "sc_exam_student_token";
+const TOKEN_KEY = "lab_edu_student_token";
 const headings: Record<PageKey, { title: string; subtitle: string }> = {
   dashboard: { title: "หน้าหลัก", subtitle: "ภาพรวมแบบทดสอบและพัฒนาการของคุณ" },
   exams: {
