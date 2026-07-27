@@ -8,6 +8,7 @@ import { AssignmentsPage } from "./pages/AssignmentsPage";
 import { LoginPage } from "./pages/LoginPage";
 import { ResultsPage } from "./pages/ResultsPage";
 import { SettingsPage } from "./pages/SettingsPage";
+import { PlaygroundPage } from "./pages/PlaygroundPage";
 import { TakingExamPage } from "./pages/TakingExamPage";
 import { ApiError } from "./services/api";
 import { authService } from "./services/auth.service";
@@ -15,10 +16,12 @@ import { aiService, type StudentAiStatus } from "./services/ai.service";
 import { assignmentService } from "./services/assignment.service";
 import { examService } from "./services/exam.service";
 import { recordService } from "./services/record.service";
+import { playgroundService } from "./services/playground.service";
 import type { StudentProfile } from "./types/auth";
 import type { AssignmentSubmitPayload, StudentAssignment } from "./types/assignment";
 import type { AttemptResult, PageKey, StudentExam } from "./types/exam";
 import type { LearningRecords } from "./types/record";
+import type { PlaygroundLanguage } from "./types/playground";
 
 const TOKEN_KEY = "lab_edu_student_token";
 const headings: Record<PageKey, { title: string; subtitle: string }> = {
@@ -30,6 +33,10 @@ const headings: Record<PageKey, { title: string; subtitle: string }> = {
   assignments: {
     title: "งานที่ได้รับมอบหมาย",
     subtitle: "ส่งงาน ติดตามการตรวจ และดูคะแนนของคุณ",
+  },
+  playground: {
+    title: "Playground",
+    subtitle: "ทดลองเขียนและรันโค้ด C++, C# และ Python ได้อย่างอิสระ",
   },
   results: {
     title: "ผลการเรียนรู้",
@@ -48,6 +55,7 @@ export default function App() {
   const [activeExam, setActiveExam] = useState<StudentExam | null>(null);
   const [result, setResult] = useState<AttemptResult | null>(null);
   const [aiStatus, setAiStatus] = useState<StudentAiStatus | null>(null);
+  const [playgroundEnabled, setPlaygroundEnabled] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
@@ -63,6 +71,7 @@ export default function App() {
     setActiveExam(null);
     setResult(null);
     setAiStatus(null);
+    setPlaygroundEnabled(false);
   }, []);
   const loadExams = useCallback(
     async (accessToken: string) => {
@@ -147,6 +156,28 @@ export default function App() {
             report: false,
             checkedAt: new Date().toISOString(),
           });
+      }
+    };
+    void check();
+    const timer = window.setInterval(() => void check(), 60_000);
+    return () => {
+      ignore = true;
+      window.clearInterval(timer);
+    };
+  }, [token]);
+  useEffect(() => {
+    if (!token) return;
+    let ignore = false;
+    const check = async () => {
+      try {
+        const status = await playgroundService.status(token);
+        if (!ignore) {
+          setPlaygroundEnabled(status.playgroundEnabled);
+          if (!status.playgroundEnabled)
+            setPage((current) => (current === "playground" ? "dashboard" : current));
+        }
+      } catch {
+        if (!ignore) setPlaygroundEnabled(false);
       }
     };
     void check();
@@ -254,8 +285,24 @@ export default function App() {
     return assignmentService.runCode(token, id, sourceCode, stdin);
   };
   const changePage = (next: PageKey) => {
+    if (next === "playground" && !playgroundEnabled) return;
     setResult(null);
     setPage(next);
+  };
+  const runPlaygroundCode = (
+    language: PlaygroundLanguage,
+    sourceCode: string,
+    stdin: string,
+  ) => {
+    if (!token) throw new Error("กรุณาเข้าสู่ระบบอีกครั้ง");
+    return playgroundService.run(token, language, sourceCode, stdin);
+  };
+  const askPlaygroundAdvice = (
+    language: PlaygroundLanguage,
+    sourceCode: string,
+  ) => {
+    if (!token) throw new Error("กรุณาเข้าสู่ระบบอีกครั้ง");
+    return playgroundService.advice(token, language, sourceCode);
   };
   const updateName = async (firstName: string, lastName: string) => {
     if (!token) return;
@@ -334,6 +381,12 @@ export default function App() {
       onSubmit={submitAssignment}
       onRun={runAssignmentCode}
     />
+  ) : page === "playground" && playgroundEnabled ? (
+    <PlaygroundPage
+      aiStatus={aiStatus}
+      onRun={runPlaygroundCode}
+      onAdvice={askPlaygroundAdvice}
+    />
   ) : page === "results" ? (
     <ResultsPage
       exams={exams}
@@ -361,6 +414,7 @@ export default function App() {
       onPage={changePage}
       onMobile={setMobileOpen}
       onLogout={confirmLogout}
+      playgroundEnabled={playgroundEnabled}
     >
       {content}
     </StudentLayout>

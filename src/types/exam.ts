@@ -1,4 +1,10 @@
-export type PageKey = "dashboard" | "exams" | "assignments" | "results" | "settings";
+export type PageKey =
+  | "dashboard"
+  | "exams"
+  | "assignments"
+  | "playground"
+  | "results"
+  | "settings";
 export type AttemptStatus = "IN_PROGRESS" | "SUBMITTED" | "GRADED";
 
 export interface AttemptSummary {

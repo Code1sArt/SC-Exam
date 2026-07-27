@@ -4,6 +4,7 @@ import {
   Home,
   LogOut,
   NotebookPen,
+  Code2,
   Settings,
 } from "lucide-react";
 import type { ReactNode } from "react";
@@ -17,6 +18,7 @@ const navigation = [
   { key: "dashboard" as const, label: "วันนี้", icon: Home },
   { key: "exams" as const, label: "แบบทดสอบ", icon: BookOpenCheck },
   { key: "assignments" as const, label: "งาน", icon: NotebookPen },
+  { key: "playground" as const, label: "Playground", icon: Code2 },
   { key: "results" as const, label: "ผลการเรียน", icon: BarChart3 },
   { key: "settings" as const, label: "บัญชี", icon: Settings },
 ];
@@ -29,6 +31,7 @@ export function StudentLayout({
   subtitle,
   onPage,
   onLogout,
+  playgroundEnabled,
   children,
 }: {
   profile: StudentProfile;
@@ -40,6 +43,7 @@ export function StudentLayout({
   onPage: (page: PageKey) => void;
   onMobile: (value: boolean) => void;
   onLogout: () => void;
+  playgroundEnabled: boolean;
   children: ReactNode;
 }) {
   return (
@@ -55,7 +59,7 @@ export function StudentLayout({
             <span className="hidden text-base font-bold sm:block">Lab EDU</span>
           </button>
           <nav className="mx-auto hidden h-full items-center gap-1 md:flex">
-            {navigation.map((item) => {
+            {navigation.filter((item) => item.key !== "playground" || playgroundEnabled).map((item) => {
               const Icon = item.icon;
               return (
                 <button
@@ -108,8 +112,8 @@ export function StudentLayout({
         {children}
       </main>
       <div className="pb-18 md:pb-0"><AppFooter /></div>
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid h-18 grid-cols-5 border-t border-[#dce7e2] bg-white/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
-        {navigation.map((item) => {
+      <nav className={`fixed inset-x-0 bottom-0 z-40 grid h-18 ${playgroundEnabled ? "grid-cols-6" : "grid-cols-5"} border-t border-[#dce7e2] bg-white/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden`}>
+        {navigation.filter((item) => item.key !== "playground" || playgroundEnabled).map((item) => {
           const Icon = item.icon;
           return (
             <button
