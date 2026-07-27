@@ -1,10 +1,12 @@
 import {
+  ArrowLeft,
   CalendarClock,
   CheckCircle2,
   Code2,
   ExternalLink,
   Eye,
   FileUp,
+  FileText,
   LoaderCircle,
   NotebookPen,
   Pencil,
@@ -319,8 +321,18 @@ export function AssignmentsPage({
                     className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-[#176b55] px-4 py-3 text-xs font-bold text-white"
                     onClick={() => openSubmission(row)}
                   >
-                    <FileUp size={16} />
-                    {late ? "ส่งงานล่าช้า" : "ส่งงาน"}
+                    {row.type === "CODE" ? (
+                      <Code2 size={16} />
+                    ) : (
+                      <FileUp size={16} />
+                    )}
+                    {row.type === "CODE"
+                      ? late
+                        ? "เปิดพื้นที่เขียน Code (ส่งล่าช้า)"
+                        : "เปิดพื้นที่เขียน Code"
+                      : late
+                        ? "ส่งงานล่าช้า"
+                        : "ส่งงาน"}
                   </button>
                 )}
               </article>
@@ -334,25 +346,69 @@ export function AssignmentsPage({
         />
       )}
       {selected && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4">
+        <div
+          className={
+            selected.type === "CODE"
+              ? "fixed inset-0 z-50 overflow-y-auto bg-[#f5f8f6]"
+              : "fixed inset-0 z-50 grid place-items-center bg-black/40 p-4"
+          }
+        >
           <section
-            className={`max-h-[92vh] w-full overflow-y-auto rounded-xl bg-white shadow-2xl ${selected.type === "CODE" ? "max-w-3xl" : "max-w-lg"}`}
+            className={
+              selected.type === "CODE"
+                ? "min-h-screen w-full bg-[#f5f8f6]"
+                : "max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white shadow-2xl"
+            }
           >
-            <header className="flex items-center justify-between border-b border-[#dce7e2] p-5">
-              <div>
+            <header
+              className={
+                selected.type === "CODE"
+                  ? "sticky top-0 z-20 flex items-center gap-4 border-b border-[#dce7e2] bg-white/95 px-4 py-3 backdrop-blur-xl sm:px-6"
+                  : "flex items-center justify-between border-b border-[#dce7e2] p-5"
+              }
+            >
+              {selected.type === "CODE" && (
+                <button
+                  type="button"
+                  className="grid size-10 shrink-0 place-items-center rounded-lg border border-[#dce7e2] text-[#176b55] hover:bg-[#eff8f4]"
+                  onClick={() => setSelected(null)}
+                  aria-label="กลับไปหน้ารายการงาน"
+                >
+                  <ArrowLeft size={19} />
+                </button>
+              )}
+              <div className="min-w-0">
                 <span className="text-[10px] font-bold text-[#238568]">
                   {selected.submissions[0]?.status === "SUBMITTED"
                     ? "แก้ไขงานที่ส่ง"
                     : "ส่งงาน"}
                 </span>
-                <h2 className="mt-1 font-bold">{selected.title}</h2>
+                <h2 className="mt-1 truncate font-bold">{selected.title}</h2>
               </div>
-              <button onClick={() => setSelected(null)}>
-                <X />
-              </button>
+              {selected.type === "CODE" ? (
+                <span className="ml-auto hidden rounded-lg bg-[#e8efff] px-3 py-2 text-[11px] font-bold text-[#315f86] sm:block">
+                  {selected.subject.name} · {selected.classroom.name}
+                </span>
+              ) : (
+                <button onClick={() => setSelected(null)}>
+                  <X />
+                </button>
+              )}
             </header>
             <form onSubmit={submit}>
-              <div className="grid gap-4 p-5">
+              <div
+                className={`grid gap-4 p-5 ${
+                  selected.type === "CODE"
+                    ? "mx-auto max-w-[1600px] lg:grid-cols-[minmax(0,1.1fr)_minmax(380px,.9fr)] lg:items-start lg:p-6"
+                    : ""
+                }`}
+              >
+                {selected.type === "CODE" && (
+                  <ProblemPdfPanel
+                    title={selected.title}
+                    url={selected.problemPdfUrl}
+                  />
+                )}
                 {selected.isGroupWork && (
                   <section className="grid gap-3 rounded-xl border border-[#ddd3f4] bg-[#faf8ff] p-4">
                     <div>
@@ -637,6 +693,72 @@ export function AssignmentsPage({
       )}
     </>
   );
+}
+
+function ProblemPdfPanel({
+  title,
+  url,
+}: {
+  title: string;
+  url?: string | null;
+}) {
+  const previewUrl = url ? pdfPreviewUrl(url) : null;
+  return (
+    <aside className="overflow-hidden rounded-xl border border-[#dce7e2] bg-white shadow-[0_8px_28px_rgba(24,50,45,.06)] lg:sticky lg:top-[85px] lg:col-start-2 lg:row-start-1 lg:row-span-[20]">
+      <header className="flex items-center gap-3 border-b border-[#dce7e2] px-4 py-3">
+        <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-[#fee9e4] text-[#bd4b3a]">
+          <FileText size={18} />
+        </span>
+        <div className="min-w-0">
+          <b className="block text-xs">โจทย์ PDF</b>
+          <span className="block truncate text-[10px] text-[#71847d]">
+            {title}
+          </span>
+        </div>
+        {url && (
+          <a
+            className="ml-auto inline-flex items-center gap-1 rounded-lg border border-[#dce7e2] px-2.5 py-2 text-[10px] font-bold text-[#315f86]"
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            เปิดไฟล์ <ExternalLink size={13} />
+          </a>
+        )}
+      </header>
+      {previewUrl ? (
+        <iframe
+          className="h-[62vh] min-h-[480px] w-full bg-[#eef1ef] lg:h-[calc(100vh-150px)]"
+          src={previewUrl}
+          title={`โจทย์ PDF: ${title}`}
+          allow="autoplay"
+        />
+      ) : (
+        <div className="grid h-[360px] place-content-center gap-3 px-6 text-center text-[#71847d] lg:h-[calc(100vh-150px)]">
+          <FileText className="mx-auto opacity-40" size={42} />
+          <b className="text-sm text-[#41554e]">ยังไม่มีไฟล์โจทย์ PDF</b>
+          <p className="max-w-xs text-xs leading-6">
+            อ่านรายละเอียดโจทย์จากคำอธิบายงาน แล้วเขียนโค้ดทางด้านซ้าย
+          </p>
+        </div>
+      )}
+    </aside>
+  );
+}
+
+function pdfPreviewUrl(value: string) {
+  try {
+    const url = new URL(value);
+    if (url.hostname === "drive.google.com") {
+      const pathId = url.pathname.match(/\/file\/d\/([^/]+)/)?.[1];
+      const id = pathId ?? url.searchParams.get("id");
+      if (id)
+        return `https://drive.google.com/file/d/${encodeURIComponent(id)}/preview`;
+    }
+    return value;
+  } catch {
+    return value;
+  }
 }
 
 function CodeEditor({

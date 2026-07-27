@@ -47,6 +47,7 @@ export interface StudentAssignment {
   status: "PUBLISHED" | "CLOSED";
   type: "GENERAL" | "CODE";
   codeLanguage?: "C" | "CPP" | "CSHARP" | "PYTHON" | null;
+  problemPdfUrl?: string | null;
   aiGradingEnabled: boolean;
   aiGradingModel?: string | null;
   isGroupWork: boolean;
