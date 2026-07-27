@@ -1,5 +1,6 @@
 import { cpp } from "@codemirror/lang-cpp";
 import { python } from "@codemirror/lang-python";
+import { csharp } from "@replit/codemirror-lang-csharp";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import CodeMirror from "@uiw/react-codemirror";
 import {
@@ -80,11 +81,19 @@ export function PlaygroundPage({
   const [advice, setAdvice] = useState<PlaygroundAdvice | null>(null);
   const [error, setError] = useState("");
   const [running, setRunning] = useState(false);
+  const [runPhase, setRunPhase] = useState<
+    "idle" | "queued" | "running" | "success" | "compile-error" | "timeout"
+  >("idle");
   const [asking, setAsking] = useState(false);
   const activeLanguage = languageOptions.find((item) => item.value === language)!;
   const aiAvailable = Boolean(aiStatus?.feedback);
   const extensions = useMemo(
-    () => (language === "CPP" ? [cpp()] : language === "PYTHON" ? [python()] : []),
+    () =>
+      language === "CPP"
+        ? [cpp()]
+        : language === "CSHARP"
+          ? [csharp()]
+          : [python()],
     [language],
   );
 
@@ -102,18 +111,33 @@ export function PlaygroundPage({
     setResult(null);
     setAdvice(null);
     setError("");
+    setRunPhase("idle");
   };
 
   const run = async () => {
     if (!code.trim() || running) return;
     setRunning(true);
+    setRunPhase("queued");
     setResult(null);
     setError("");
+    const runningTimer = window.setTimeout(() => setRunPhase("running"), 350);
     try {
-      setResult(await onRun(language, code, stdin));
+      const nextResult = await onRun(language, code, stdin);
+      setResult(nextResult);
+      setRunPhase(
+        nextResult.statusId === 3
+          ? "success"
+          : nextResult.statusId === 6
+            ? "compile-error"
+            : nextResult.statusId === 5
+              ? "timeout"
+              : "idle",
+      );
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "รันโค้ดไม่สำเร็จ");
+      setRunPhase("idle");
     } finally {
+      window.clearTimeout(runningTimer);
       setRunning(false);
     }
   };
@@ -123,6 +147,7 @@ export function PlaygroundPage({
     setAsking(true);
     setAdvice(null);
     setError("");
+    setRunPhase("idle");
     try {
       setAdvice(await onAdvice(language, code));
     } catch (caught) {
@@ -216,7 +241,11 @@ export function PlaygroundPage({
             ) : (
               <Play size={15} fill="currentColor" />
             )}
-            {running ? "กำลังรัน..." : "Run code"}
+            {running
+              ? runPhase === "queued"
+                ? "รอคิว..."
+                : "กำลังรัน..."
+              : "Run code"}
           </button>
         </footer>
       </section>
@@ -238,6 +267,11 @@ export function PlaygroundPage({
           <header className="flex items-center gap-2 border-b border-[#2e3b4e] px-4 py-3">
             <Terminal size={16} className="text-[#77d7b3]" />
             <b className="text-xs">Console</b>
+            {running && !result && !error && (
+              <span className="ml-auto text-[10px] font-bold text-[#ffbd66]">
+                {runPhase === "queued" ? "รอคิว" : "กำลังรัน"}
+              </span>
+            )}
             {result && (
               <span
                 className={`ml-auto inline-flex items-center gap-1 text-[10px] font-bold ${

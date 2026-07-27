@@ -15,12 +15,12 @@ import { AiStatusBadge } from "../ui/AiStatusBadge";
 import { AppFooter } from "./AppFooter";
 
 const navigation = [
-  { key: "dashboard" as const, label: "วันนี้", icon: Home },
-  { key: "exams" as const, label: "แบบทดสอบ", icon: BookOpenCheck },
-  { key: "assignments" as const, label: "งาน", icon: NotebookPen },
-  { key: "playground" as const, label: "Playground", icon: Code2 },
-  { key: "results" as const, label: "ผลการเรียน", icon: BarChart3 },
-  { key: "settings" as const, label: "บัญชี", icon: Settings },
+  { key: "dashboard" as const, label: "วันนี้", mobileLabel: "วันนี้", icon: Home },
+  { key: "exams" as const, label: "แบบทดสอบ", mobileLabel: "ข้อสอบ", icon: BookOpenCheck },
+  { key: "assignments" as const, label: "งาน", mobileLabel: "งาน", icon: NotebookPen },
+  { key: "playground" as const, label: "Playground", mobileLabel: "โค้ด", icon: Code2 },
+  { key: "results" as const, label: "ผลการเรียน", mobileLabel: "ผลเรียน", icon: BarChart3 },
+  { key: "settings" as const, label: "บัญชี", mobileLabel: "บัญชี", icon: Settings },
 ];
 
 export function StudentLayout({
@@ -49,7 +49,7 @@ export function StudentLayout({
   return (
     <div className="flex min-h-screen flex-col bg-[#f5f8f6] text-[#18322d]">
       <header className="sticky top-0 z-30 border-b border-[#dce7e2] bg-[#f5f8f6]/95 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6 lg:h-18">
+        <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6 lg:h-18 lg:gap-6">
           <button
             className="flex shrink-0 items-center gap-2.5"
             onClick={() => onPage("dashboard")}
@@ -58,19 +58,20 @@ export function StudentLayout({
             <img className="size-9 object-contain" src="/lab-edu-logo.png" alt="" />
             <span className="hidden text-base font-bold sm:block">Lab EDU</span>
           </button>
-          <nav className="mx-auto hidden h-full items-center gap-1 md:flex">
+          <nav className="mx-auto hidden h-full items-center gap-0.5 lg:flex">
             {navigation.filter((item) => item.key !== "playground" || playgroundEnabled).map((item) => {
               const Icon = item.icon;
               return (
                 <button
                   key={item.key}
                   onClick={() => onPage(item.key)}
-                  className={`relative flex h-full items-center gap-2 px-4 text-xs font-semibold transition ${page === item.key ? "text-[#176b55]" : "text-[#62766f] hover:text-[#18322d]"}`}
+                  className={`relative flex h-full items-center gap-1.5 px-2.5 text-xs font-semibold transition xl:px-3.5 ${page === item.key ? "text-[#176b55]" : "text-[#62766f] hover:text-[#18322d]"}`}
+                  title={item.label}
                 >
                   <Icon size={17} />
                   {item.label}
                   {page === item.key && (
-                    <span className="absolute inset-x-4 bottom-0 h-0.5 bg-[#176b55]" />
+                    <span className="absolute inset-x-2.5 bottom-0 h-0.5 bg-[#176b55] xl:inset-x-3.5" />
                   )}
                 </button>
               );
@@ -78,7 +79,7 @@ export function StudentLayout({
           </nav>
           <div className="ml-auto flex items-center gap-3 md:ml-0">
             <AiStatusBadge status={aiStatus} compact />
-            <div className="hidden text-right sm:block">
+            <div className="hidden text-right xl:block">
               <b className="block max-w-40 truncate text-xs">
                 {profile.firstName} {profile.lastName}
               </b>
@@ -100,7 +101,7 @@ export function StudentLayout({
           </div>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-12 pt-7 sm:px-6 sm:pt-9 md:pb-14">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-24 pt-7 sm:px-6 sm:pt-9 lg:pb-14">
         <div className="mb-7">
           <h1 className="text-2xl font-bold leading-tight text-[#18322d] sm:text-3xl">
             {title}
@@ -111,8 +112,8 @@ export function StudentLayout({
         </div>
         {children}
       </main>
-      <div className="pb-18 md:pb-0"><AppFooter /></div>
-      <nav className={`fixed inset-x-0 bottom-0 z-40 grid h-18 ${playgroundEnabled ? "grid-cols-6" : "grid-cols-5"} border-t border-[#dce7e2] bg-white/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden`}>
+      <div className="pb-18 lg:pb-0"><AppFooter /></div>
+      <nav className={`fixed inset-x-0 bottom-0 z-40 grid h-18 ${playgroundEnabled ? "grid-cols-6" : "grid-cols-5"} border-t border-[#dce7e2] bg-white/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden`}>
         {navigation.filter((item) => item.key !== "playground" || playgroundEnabled).map((item) => {
           const Icon = item.icon;
           return (
@@ -126,7 +127,7 @@ export function StudentLayout({
               >
                 <Icon size={18} />
               </span>
-              <span className="truncate">{item.label}</span>
+              <span className="truncate">{item.mobileLabel}</span>
             </button>
           );
         })}
