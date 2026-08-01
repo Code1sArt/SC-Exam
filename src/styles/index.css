@@ -20,6 +20,26 @@ button:disabled { cursor: wait; opacity: .58; }
 .student-input { height: 3rem; width: 100%; border-radius: .5rem; border: 1px solid #cddbd5; background: white; padding: 0 .875rem; color: #18322d; font-size: .8rem; font-weight: 400; outline: none; transition: .18s ease; }
 .student-input::placeholder { color: #9aa9a3; }
 .student-input:focus { border-color: #238568; box-shadow: 0 0 0 4px #dff1ea; }
+.login-page { isolation: isolate; }
+.login-hero::after { position: absolute; inset: auto -10% -18% auto; width: 24rem; height: 24rem; border-radius: 999px; background: rgb(111 237 190 / .15); content: ""; filter: blur(2px); }
+.login-orb { position: absolute; z-index: 1; border-radius: 999px; border: 1px solid rgb(255 255 255 / .24); background: rgb(203 255 231 / .16); backdrop-filter: blur(4px); animation: login-float 7s ease-in-out infinite; }
+.login-orb-one { top: 13%; right: 13%; width: 3.75rem; height: 3.75rem; }
+.login-orb-two { right: 32%; bottom: 14%; width: 1.7rem; height: 1.7rem; animation-delay: -3s; }
+.login-star { position: absolute; z-index: 2; color: #d9ffed; font-size: 1.6rem; text-shadow: 0 0 15px rgb(214 255 235 / .65); animation: login-twinkle 2.7s ease-in-out infinite; }
+.login-star-one { top: 24%; right: 23%; }.login-star-two { right: 8%; bottom: 28%; font-size: 1.1rem; animation-delay: -1.2s; }
+.login-panel { background: radial-gradient(circle at 90% 8%, #e5f8ef 0, transparent 26rem), radial-gradient(circle at 5% 91%, #fff0d8 0, transparent 20rem), #f9fcfa; }
+.login-card { position: relative; z-index: 1; border: 1px solid rgb(207 226 217 / .82); border-radius: 1.5rem; background: rgb(255 255 255 / .77); padding: 2.25rem; box-shadow: 0 22px 55px rgb(36 95 73 / .11); backdrop-filter: blur(10px); animation: login-enter .7s cubic-bezier(.2,.75,.25,1) both; }
+.login-welcome-icon { display: grid; width: 3.15rem; height: 3.15rem; place-items: center; border-radius: 1rem 1rem 1rem .35rem; background: linear-gradient(135deg, #dff7eb, #bdebd5); color: #176b55; box-shadow: 0 8px 18px rgb(41 135 101 / .15); animation: login-float 4.5s ease-in-out infinite; }
+.login-input-wrap { position: relative; display: flex; align-items: center; color: #78a293; }.login-input-wrap svg { position: absolute; left: .9rem; pointer-events: none; }.login-input-wrap .student-input { padding-left: 2.75rem; }.login-input-wrap:focus-within { color: #237b63; }
+.login-submit { border-radius: .85rem; background: linear-gradient(135deg, #218269, #176b55); box-shadow: 0 8px 17px rgb(23 107 85 / .22); }.login-submit:hover:not(:disabled) { background: linear-gradient(135deg, #289376, #105844); box-shadow: 0 12px 22px rgb(23 107 85 / .28); }
+.login-doodle { position: absolute; z-index: 0; color: #a5d9c3; opacity: .7; animation: login-float 6s ease-in-out infinite; }.login-doodle-one { top: 9%; right: 9%; font-size: 2.25rem; }.login-doodle-two { bottom: 13%; left: 9%; font-size: 1.65rem; animation-delay: -2.5s; }
+.login-capybara { position: absolute; z-index: 0; right: clamp(.5rem, 4vw, 3rem); bottom: 2.5rem; width: clamp(8.5rem, 17vw, 13rem); pointer-events: none; animation: capybara-run 1.05s ease-in-out infinite; }.login-capybara img { position: relative; z-index: 1; display: block; width: 100%; filter: drop-shadow(0 12px 10px rgb(93 66 36 / .16)); }.login-capybara-shadow { position: absolute; z-index: 0; right: 13%; bottom: 4%; width: 66%; height: 8%; border-radius: 50%; background: rgb(94 73 48 / .14); filter: blur(5px); animation: capybara-shadow 1.05s ease-in-out infinite; }
+@keyframes login-enter { from { opacity: 0; transform: translateY(18px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes login-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-11px) rotate(6deg); } }
+@keyframes login-twinkle { 0%, 100% { opacity: .35; transform: scale(.75) rotate(0); } 50% { opacity: 1; transform: scale(1.14) rotate(16deg); } }
+@keyframes capybara-run { 0%, 100% { transform: translate(0, 0) rotate(-1.5deg); } 25% { transform: translate(-5px, -8px) rotate(1deg); } 50% { transform: translate(-10px, 0) rotate(-1.5deg); } 75% { transform: translate(-5px, -6px) rotate(1deg); } }
+@keyframes capybara-shadow { 0%, 100% { transform: scaleX(1); opacity: .8; } 25%, 75% { transform: scaleX(.72); opacity: .38; } }
+@media (max-width: 639px) { .login-card { padding: 1.5rem; border-radius: 1.25rem; } .login-capybara { right: .75rem; bottom: 2.5rem; width: 7.25rem; opacity: .48; } }
 .swal2-popup { border-radius: .5rem; font-family: var(--font-sans); }
 .swal2-title { font-size: 1.2rem; color: #18322d; }
 .swal2-confirm, .swal2-cancel { border-radius: .5rem; }
