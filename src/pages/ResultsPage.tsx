@@ -440,9 +440,9 @@ function ExamDetail({ detail }: { detail: AttemptResult }) {
                 <b className="text-sm leading-6">
                   ข้อ {index + 1}: {item.question?.prompt}
                 </b>
-                {item.aiFeedback && (
+                {item.feedback && (
                   <p className="mt-1 text-xs leading-6 text-[#71847d]">
-                    {item.aiFeedback}
+                    {item.feedback}
                   </p>
                 )}
               </div>

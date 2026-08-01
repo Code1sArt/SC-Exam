@@ -1,10 +1,5 @@
 export type PageKey =
-  | "dashboard"
-  | "exams"
-  | "assignments"
-  | "playground"
-  | "results"
-  | "settings";
+  "dashboard" | "exams" | "assignments" | "playground" | "results" | "settings";
 export type AttemptStatus = "IN_PROGRESS" | "SUBMITTED" | "GRADED";
 
 export interface AttemptSummary {
@@ -28,6 +23,8 @@ export interface StudentExam {
   description?: string | null;
   status: "DRAFT" | "PUBLISHED" | "CLOSED" | "ARCHIVED";
   isAdaptive: boolean;
+  questionCount?: number;
+  essayQuestionCount?: number | null;
   durationMinutes?: number | null;
   availableFrom?: string | null;
   availableUntil?: string | null;
@@ -40,9 +37,15 @@ export interface StudentExam {
 
 export interface ExamQuestion {
   id: string;
-  type: "MULTIPLE_CHOICE" | "TRUE_FALSE" | "SHORT_ANSWER" | "ESSAY" | "FILL_IN_BLANK";
+  type:
+    | "MULTIPLE_CHOICE"
+    | "TRUE_FALSE"
+    | "SHORT_ANSWER"
+    | "ESSAY"
+    | "FILL_IN_BLANK";
   difficulty: string;
   prompt: string;
+  imageUrl?: string | null;
   options?: Array<{ id: string; text: string }> | null;
   score: string | number;
   position: number;
@@ -59,7 +62,8 @@ export interface Attempt {
   lastViolationAt?: string | null;
 }
 
-export type ExamViolationType = "TAB_HIDDEN" | "WINDOW_BLUR" | "COPY" | "PASTE" | "CUT" | "PAGE_EXIT";
+export type ExamViolationType =
+  "TAB_HIDDEN" | "WINDOW_BLUR" | "COPY" | "PASTE" | "CUT" | "PAGE_EXIT";
 
 export interface AttemptLockStatus {
   id: string;
@@ -71,8 +75,18 @@ export interface AttemptLockStatus {
 }
 
 export interface AnswerResult {
-  answer: { id: string; score: string | number | null; isCorrect: boolean | null; aiFeedback?: string | null };
-  adaptiveState: { currentDifficulty: string; correctStreak: number; incorrectStreak: number };
+  answer: {
+    id: string;
+    score: string | number | null;
+    isCorrect: boolean | null;
+    feedback?: string | null;
+    aiFeedback?: string | null;
+  };
+  adaptiveState: {
+    currentDifficulty: string;
+    correctStreak: number;
+    incorrectStreak: number;
+  };
   nextQuestion: ExamQuestion | null;
 }
 
@@ -94,6 +108,26 @@ export interface AttemptResult {
   aiReport?: LearningReport | null;
   startedAt: string;
   submittedAt?: string | null;
-  exam: { id: string; title: string; isAdaptive: boolean; classroom: { id: string; name: string }; subject: { id: string; name: string } };
-  answers: Array<{ id: string; response: unknown; score: string | number | null; isCorrect: boolean | null; aiFeedback?: string | null; question: { id: string; type: string; prompt: string; position: number; maxScore: string | number } | null }>;
+  exam: {
+    id: string;
+    title: string;
+    isAdaptive: boolean;
+    classroom: { id: string; name: string };
+    subject: { id: string; name: string };
+  };
+  answers: Array<{
+    id: string;
+    response: unknown;
+    score: string | number | null;
+    isCorrect: boolean | null;
+    feedback?: string | null;
+    aiFeedback?: string | null;
+    question: {
+      id: string;
+      type: string;
+      prompt: string;
+      position: number;
+      maxScore: string | number;
+    } | null;
+  }>;
 }

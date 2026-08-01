@@ -18,12 +18,16 @@ import { examService } from "./services/exam.service";
 import { recordService } from "./services/record.service";
 import { playgroundService } from "./services/playground.service";
 import type { StudentProfile } from "./types/auth";
-import type { AssignmentSubmitPayload, StudentAssignment } from "./types/assignment";
+import type {
+  AssignmentSubmitPayload,
+  StudentAssignment,
+} from "./types/assignment";
 import type { AttemptResult, PageKey, StudentExam } from "./types/exam";
 import type { LearningRecords } from "./types/record";
 import type { PlaygroundLanguage } from "./types/playground";
 
 const TOKEN_KEY = "lab_edu_student_token";
+const PAGE_KEY = "lab_edu_student_page";
 const headings: Record<PageKey, { title: string; subtitle: string }> = {
   dashboard: { title: "หน้าหลัก", subtitle: "ภาพรวมแบบทดสอบและพัฒนาการของคุณ" },
   exams: {
@@ -63,6 +67,7 @@ export default function App() {
 
   const logout = useCallback(() => {
     sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(PAGE_KEY);
     setToken(null);
     setProfile(null);
     setExams([]);
@@ -100,9 +105,19 @@ export default function App() {
   );
   useEffect(() => {
     const saved = sessionStorage.getItem(TOKEN_KEY);
+    const savedPage = sessionStorage.getItem(PAGE_KEY);
     setToken(saved);
+    if (
+      savedPage &&
+      Object.prototype.hasOwnProperty.call(headings, savedPage)
+    ) {
+      setPage(savedPage as PageKey);
+    }
     setHydrated(true);
   }, []);
+  useEffect(() => {
+    if (hydrated) sessionStorage.setItem(PAGE_KEY, page);
+  }, [hydrated, page]);
   useEffect(() => {
     if (!token) return;
     let ignore = false;
@@ -174,7 +189,9 @@ export default function App() {
         if (!ignore) {
           setPlaygroundEnabled(status.playgroundEnabled);
           if (!status.playgroundEnabled)
-            setPage((current) => (current === "playground" ? "dashboard" : current));
+            setPage((current) =>
+              current === "playground" ? "dashboard" : current,
+            );
         }
       } catch {
         if (!ignore) setPlaygroundEnabled(false);
@@ -225,7 +242,7 @@ export default function App() {
       const answer = await Swal.fire({
         icon: "info",
         title: exam.title,
-        html: `<p>จำนวน ${exam._count.items} ข้อ · ${exam.durationMinutes ? `${exam.durationMinutes} นาที` : "ไม่จำกัดเวลา"}</p><div style="margin-top:14px;padding:12px;text-align:left;border-radius:8px;background:#fff7e2;font-size:11px;line-height:1.7"><b>ระบบควบคุมการสอบ</b><br>ห้ามสลับแท็บ พับหรือออกจากหน้าจอ และห้ามคัดลอก วาง หรือตัดข้อความ หากตรวจพบข้อสอบจะถูกล็อกทันที</div>`,
+        html: `<p>จำนวน ${exam.questionCount ?? exam._count.items} ข้อ · ${exam.durationMinutes ? `${exam.durationMinutes} นาที` : "ไม่จำกัดเวลา"}</p><div style="margin-top:14px;padding:12px;text-align:left;border-radius:8px;background:#fff7e2;font-size:11px;line-height:1.7"><b>ระบบควบคุมการสอบ</b><br>ห้ามสลับแท็บ พับหรือออกจากหน้าจอ และห้ามคัดลอก วาง หรือตัดข้อความ หากตรวจพบข้อสอบจะถูกล็อกทันที</div>`,
         showCancelButton: true,
         confirmButtonText: "รับทราบและเริ่มสอบ",
         cancelButtonText: "ยกเลิก",
@@ -258,7 +275,10 @@ export default function App() {
       setPageLoading(false);
     }
   };
-  const submitAssignment = async (id: string, payload: AssignmentSubmitPayload) => {
+  const submitAssignment = async (
+    id: string,
+    payload: AssignmentSubmitPayload,
+  ) => {
     if (!token) return false;
     setLoading(true);
     try {
@@ -267,8 +287,14 @@ export default function App() {
       await loadRecords(token);
       await Swal.fire({
         icon: "success",
-        title: submission.status === "GRADED" ? "ตรวจงานอัตโนมัติเรียบร้อย" : "ส่งงานเรียบร้อย",
-        text: submission.status === "GRADED" ? `ได้ ${Number(submission.score ?? 0)} คะแนน — ${submission.feedback ?? ""}` : "รอครูตรวจและให้คะแนน",
+        title:
+          submission.status === "GRADED"
+            ? "ตรวจงานอัตโนมัติเรียบร้อย"
+            : "ส่งงานเรียบร้อย",
+        text:
+          submission.status === "GRADED"
+            ? `ได้ ${Number(submission.score ?? 0)} คะแนน — ${submission.feedback ?? ""}`
+            : "รอครูตรวจและให้คะแนน",
         timer: submission.status === "GRADED" ? undefined : 1000,
         showConfirmButton: submission.status === "GRADED",
       });
