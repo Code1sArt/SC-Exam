@@ -105,6 +105,7 @@ export function TakingExamPage({
   const [seconds, setSeconds] = useState<number | null>(null);
   const violationReported = useRef(Boolean(active?.lockedAt));
   const checkingUnlock = useRef(false);
+  const answerInFlight = useRef(false);
 
   const finish = useCallback(
     async (id = attemptId) => {
@@ -302,7 +303,8 @@ export function TakingExamPage({
   }, [checkUnlock, lock]);
 
   const sendAnswer = async () => {
-    if (!question || !answer.trim() || lock) return;
+    if (!question || !answer.trim() || lock || answerInFlight.current) return;
+    answerInFlight.current = true;
     setSaving(true);
     try {
       setFeedback(
@@ -316,8 +318,29 @@ export function TakingExamPage({
     } catch (error) {
       if (error instanceof ApiError && error.status === 423)
         setLock(await examService.status(token, attemptId));
-      else await showError(error, onUnauthorized);
+      else if (
+        error instanceof ApiError &&
+        (error.status === 400 || error.status === 409) &&
+        /already been answered/i.test(error.message)
+      ) {
+        // The first request can reach the server even when its response is lost,
+        // or a rapid double tap can race React's disabled-state render. Re-sync
+        // from the attempt instead of leaving the student stuck on a stale item.
+        try {
+          const next = await examService.next(token, attemptId);
+          if (next) {
+            setQuestion(next);
+            setAnswer("");
+            setFeedback(null);
+          } else {
+            onComplete(await examService.submit(token, attemptId));
+          }
+        } catch (syncError) {
+          await showError(syncError, onUnauthorized);
+        }
+      } else await showError(error, onUnauthorized);
     } finally {
+      answerInFlight.current = false;
       setSaving(false);
     }
   };

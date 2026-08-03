@@ -330,6 +330,10 @@ export default function App() {
     if (!token) throw new Error("กรุณาเข้าสู่ระบบอีกครั้ง");
     return playgroundService.advice(token, language, sourceCode);
   };
+  const loadPlaygroundProblems = useCallback(() => {
+    if (!token) throw new Error("กรุณาเข้าสู่ระบบอีกครั้ง");
+    return playgroundService.problems(token);
+  }, [token]);
   const updateName = async (firstName: string, lastName: string) => {
     if (!token) return;
     setLoading(true);
@@ -410,6 +414,7 @@ export default function App() {
   ) : page === "playground" && playgroundEnabled ? (
     <PlaygroundPage
       aiStatus={aiStatus}
+      onLoadProblems={loadPlaygroundProblems}
       onRun={runPlaygroundCode}
       onAdvice={askPlaygroundAdvice}
     />

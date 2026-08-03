@@ -17,9 +17,11 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { StudentAiStatus } from "../services/ai.service";
+import { PlaygroundProblemLibrary } from "../components/playground/PlaygroundProblemLibrary";
 import type {
   PlaygroundAdvice,
   PlaygroundLanguage,
+  PlaygroundProblem,
   PlaygroundRunResult,
 } from "../types/playground";
 
@@ -60,10 +62,12 @@ const storageKey = (language: PlaygroundLanguage) =>
 
 export function PlaygroundPage({
   aiStatus,
+  onLoadProblems,
   onRun,
   onAdvice,
 }: {
   aiStatus: StudentAiStatus | null;
+  onLoadProblems: () => Promise<PlaygroundProblem[]>;
   onRun: (
     language: PlaygroundLanguage,
     sourceCode: string,
@@ -171,6 +175,7 @@ export function PlaygroundPage({
 
   return (
     <div className="space-y-5">
+      <PlaygroundProblemLibrary onLoad={onLoadProblems} />
       <section className="overflow-hidden rounded-xl border border-[#26394a] bg-[#111827] shadow-[0_16px_45px_rgba(24,50,45,.12)]">
         <header className="flex flex-wrap items-center gap-3 border-b border-[#2e3b4e] bg-[#172033] px-4 py-3">
           <span className="flex items-center gap-2 text-xs font-bold text-white">

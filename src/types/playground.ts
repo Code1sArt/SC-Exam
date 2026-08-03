@@ -6,6 +6,18 @@ export interface PlaygroundStatus {
   playgroundEnabled: boolean;
 }
 
+export type PlaygroundDifficulty = "EASY" | "MEDIUM" | "HARD";
+
+export interface PlaygroundProblem {
+  id: string;
+  title: string;
+  description?: string | null;
+  difficulty: PlaygroundDifficulty;
+  driveUrl: string;
+  previewUrl: string;
+  position: number;
+}
+
 export type PlaygroundRunResult = CodeRunResult;
 
 export interface PlaygroundAdvice {
