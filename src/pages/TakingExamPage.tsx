@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
+import { ExamCompanions } from "../components/exam/ExamCompanions";
 import { QuestionInput } from "../components/exam/QuestionInput";
 import { AiStatusBadge } from "../components/ui/AiStatusBadge";
 import type { StudentAiStatus } from "../services/ai.service";
@@ -538,6 +539,7 @@ export function TakingExamPage({
             </button>
           </footer>
         </article>
+        <ExamCompanions />
         <button
           className="student-button-secondary mt-5 w-full sm:hidden"
           onClick={requestSubmit}
