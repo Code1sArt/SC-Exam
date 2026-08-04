@@ -1,0 +1,6 @@
+export type CodeLanguage = "C" | "CPP" | "CSHARP" | "PYTHON";
+export interface CodingProblem { id: string; title: string; description?: string | null; pdfUrl: string; previewUrl: string; language: CodeLanguage; score: string | number; position: number }
+export interface CodingAnswerResult { id: string; problemId: string; score?: string | number | null; feedback?: string | null; problem?: { title: string; score: string | number } }
+export interface CodingAttempt { id: string; status: "IN_PROGRESS" | "SUBMITTED" | "GRADED"; gradingStatus?: "QUEUED" | "GRADING" | "GRADED" | "FAILED" | null; score?: string | number | null; maxScore?: string | number | null; percentage?: string | number | null; lockedAt?: string | null; lockReason?: string | null; startedAt: string; answers?: CodingAnswerResult[] }
+export interface StudentCodingTest { id: string; title: string; description?: string | null; status: string; requiredCount: number; durationMinutes?: number | null; availableFrom?: string | null; availableUntil?: string | null; aiGradingEnabled: boolean; classroom: { id: string; name: string }; subject: { id: string; name: string }; problems: CodingProblem[]; attempts: CodingAttempt[] }
+export interface CodingStart { attempt: CodingAttempt; problems: CodingProblem[] }

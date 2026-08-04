@@ -10,6 +10,7 @@ import { ResultsPage } from "./pages/ResultsPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { PlaygroundPage } from "./pages/PlaygroundPage";
 import { TakingExamPage } from "./pages/TakingExamPage";
+import { CodingTestsPage } from "./pages/CodingTestsPage";
 import { ApiError } from "./services/api";
 import { authService } from "./services/auth.service";
 import { aiService, type StudentAiStatus } from "./services/ai.service";
@@ -17,6 +18,7 @@ import { assignmentService } from "./services/assignment.service";
 import { examService } from "./services/exam.service";
 import { recordService } from "./services/record.service";
 import { playgroundService } from "./services/playground.service";
+import { codingTestService } from "./services/coding-test.service";
 import type { StudentProfile } from "./types/auth";
 import type {
   AssignmentSubmitPayload,
@@ -25,6 +27,7 @@ import type {
 import type { AttemptResult, PageKey, StudentExam } from "./types/exam";
 import type { LearningRecords } from "./types/record";
 import type { PlaygroundLanguage } from "./types/playground";
+import type { StudentCodingTest } from "./types/coding-test";
 
 const TOKEN_KEY = "lab_edu_student_token";
 const PAGE_KEY = "lab_edu_student_page";
@@ -34,6 +37,7 @@ const headings: Record<PageKey, { title: string; subtitle: string }> = {
     title: "แบบทดสอบของฉัน",
     subtitle: "เลือกแบบทดสอบที่ได้รับมอบหมายจากครู",
   },
+  "coding-tests": { title: "Coding Test", subtitle: "สอบเขียนโค้ด เลือกโจทย์ และติดตามสถานะคิวตรวจ" },
   assignments: {
     title: "งานที่ได้รับมอบหมาย",
     subtitle: "ส่งงาน ติดตามการตรวจ และดูคะแนนของคุณ",
@@ -54,6 +58,7 @@ export default function App() {
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [exams, setExams] = useState<StudentExam[]>([]);
   const [assignments, setAssignments] = useState<StudentAssignment[]>([]);
+  const [codingTests, setCodingTests] = useState<StudentCodingTest[]>([]);
   const [records, setRecords] = useState<LearningRecords | null>(null);
   const [page, setPage] = useState<PageKey>("dashboard");
   const [activeExam, setActiveExam] = useState<StudentExam | null>(null);
@@ -72,6 +77,7 @@ export default function App() {
     setProfile(null);
     setExams([]);
     setAssignments([]);
+    setCodingTests([]);
     setRecords(null);
     setActiveExam(null);
     setResult(null);
@@ -103,6 +109,7 @@ export default function App() {
     },
     [logout],
   );
+  const loadCodingTests = useCallback(async (accessToken: string) => { try { setCodingTests(await codingTestService.list(accessToken)); } catch (error) { if (error instanceof ApiError && error.status === 401) logout(); else await showError(error); } }, [logout]);
   useEffect(() => {
     const saved = sessionStorage.getItem(TOKEN_KEY);
     const savedPage = sessionStorage.getItem(PAGE_KEY);
@@ -134,14 +141,16 @@ export default function App() {
           logout();
           return;
         }
-        const [examRows, assignmentRows, recordRows] = await Promise.all([
+        const [examRows, codingRows, assignmentRows, recordRows] = await Promise.all([
           examService.list(token),
+          codingTestService.list(token),
           assignmentService.list(token),
           recordService.mine(token),
         ]);
         if (!ignore) {
           setProfile(user);
           setExams(examRows);
+          setCodingTests(codingRows);
           setAssignments(assignmentRows);
           setRecords(recordRows);
         }
@@ -404,6 +413,8 @@ export default function App() {
     />
   ) : page === "exams" ? (
     <ExamsPage exams={exams} onTake={takeExam} onResult={openResult} />
+  ) : page === "coding-tests" ? (
+    <CodingTestsPage token={token} rows={codingTests} onRefresh={() => loadCodingTests(token)} onRecords={() => loadRecords(token)} />
   ) : page === "assignments" ? (
     <AssignmentsPage
       rows={assignments}
