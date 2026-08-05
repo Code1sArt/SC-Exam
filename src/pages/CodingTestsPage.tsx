@@ -90,16 +90,24 @@ export function CodingTestsPage({
 
     try {
       const result = await codingTestService.start(token, row.id);
+      const currentAttempt =
+        result.attempt.status === "IN_PROGRESS"
+          ? result.attempt
+          : await codingTestService.status(token, result.attempt.id);
       setTest(row);
-      setAttempt(result.attempt);
+      setAttempt(currentAttempt);
       setProblems(result.problems);
-      setSelected([]);
+      setSelected(
+        currentAttempt.answers?.map((answer) => answer.problemId) ?? [],
+      );
       setActiveId(result.problems[0]?.id ?? "");
       setCodes(
         Object.fromEntries(
           result.problems.map((problem) => [
             problem.id,
-            starter[problem.language],
+            currentAttempt.answers?.find(
+              (answer) => answer.problemId === problem.id,
+            )?.sourceCode ?? starter[problem.language],
           ]),
         ),
       );
@@ -260,37 +268,100 @@ export function CodingTestsPage({
     }
 
     if (attempt.status !== "IN_PROGRESS") {
+      const graded = attempt.status === "GRADED";
       return (
-        <section className="-mx-4 -mt-7 grid min-h-[70vh] place-items-center bg-[#111a20] p-6 text-center text-white sm:-mx-6 sm:-mt-9">
-          <div>
-            {attempt.status === "GRADED" ? (
-              <CheckCircle2 className="mx-auto text-[#68d3ad]" size={52} />
-            ) : (
-              <LoaderCircle
-                className="mx-auto animate-spin text-[#f4c95d]"
-                size={52}
-              />
-            )}
-            <h2 className="mt-5 text-2xl font-bold">
-              {attempt.status === "GRADED"
-                ? `ได้ ${Number(attempt.score)}/${Number(attempt.maxScore)} คะแนน`
-                : attempt.gradingStatus === "GRADING"
-                  ? "กำลังตรวจโค้ด"
-                  : attempt.gradingStatus === "FAILED"
-                    ? "คิวตรวจมีปัญหา ครูจะตรวจสอบให้"
-                    : "อยู่ในคิวตรวจ"}
-            </h2>
-            <p className="mt-2 text-sm text-white/60">
-              {attempt.status === "GRADED"
-                ? "คะแนนนี้ถูกรวมเป็นคะแนนสอบแล้ว"
-                : "ออกจากหน้านี้ได้ ระบบจะประมวลผลต่ออัตโนมัติ"}
-            </p>
+        <section className="-mx-4 -mt-7 min-h-[70vh] bg-[#111a20] p-4 text-white sm:-mx-6 sm:-mt-9 sm:p-6">
+          <div className="mx-auto max-w-5xl">
             <button
-              className="mt-6 rounded-lg bg-white/10 px-4 py-2 text-xs"
+              className="rounded-lg bg-white/10 px-4 py-2 text-xs transition hover:bg-white/15"
               onClick={() => setTest(null)}
             >
               กลับหน้ารายการ
             </button>
+
+            <div className="py-8 text-center">
+              {graded ? (
+                <CheckCircle2 className="mx-auto text-[#68d3ad]" size={52} />
+              ) : (
+                <LoaderCircle
+                  className="mx-auto animate-spin text-[#f4c95d]"
+                  size={52}
+                />
+              )}
+              <h2 className="mt-5 text-2xl font-bold">
+                {graded
+                  ? `ได้ ${Number(attempt.score)}/${Number(attempt.maxScore)} คะแนน`
+                  : attempt.gradingStatus === "GRADING"
+                    ? "กำลังตรวจโค้ด"
+                    : attempt.gradingStatus === "FAILED"
+                      ? "คิวตรวจมีปัญหา ครูจะตรวจสอบให้"
+                      : "อยู่ในคิวตรวจ"}
+              </h2>
+              <p className="mt-2 text-sm text-white/60">
+                {graded
+                  ? "คะแนนอิงจากผล Test case และคุณภาพโค้ดของแต่ละข้อ"
+                  : "ออกจากหน้านี้ได้ ระบบจะประมวลผลต่ออัตโนมัติ"}
+              </p>
+            </div>
+
+            {graded && (
+              <div className="space-y-5 text-left">
+                {attempt.answers?.map((answer, index) => {
+                  const problem = problems.find(
+                    (item) => item.id === answer.problemId,
+                  );
+                  return (
+                    <article
+                      className="overflow-hidden rounded-xl border border-white/10 bg-[#162129]"
+                      key={answer.id}
+                    >
+                      <header className="flex flex-wrap items-center gap-3 border-b border-white/10 px-4 py-3 sm:px-5">
+                        <span className="grid size-8 place-items-center rounded-lg bg-[#68d3ad]/15 text-xs font-bold text-[#82dfbd]">
+                          {index + 1}
+                        </span>
+                        <div className="min-w-0">
+                          <h3 className="truncate text-sm font-bold">
+                            {answer.problem?.title ?? problem?.title ?? `ข้อ ${index + 1}`}
+                          </h3>
+                          <span className="text-[10px] text-white/45">
+                            {problem ? labels[problem.language] : "Source code"}
+                            {answer.totalTestCases != null &&
+                              ` · ผ่าน ${answer.passedTestCases ?? 0}/${answer.totalTestCases} Test case`}
+                          </span>
+                        </div>
+                        <b className="ml-auto text-sm text-[#82dfbd]">
+                          {Number(answer.score ?? 0)}/
+                          {Number(answer.problem?.score ?? problem?.score ?? 0)} คะแนน
+                        </b>
+                      </header>
+
+                      <div className="grid gap-4 p-4 lg:grid-cols-[minmax(0,3fr)_minmax(280px,2fr)] sm:p-5">
+                        <div>
+                          <div className="mb-2 flex items-center gap-2 text-[10px] font-bold text-white/55">
+                            <Code2 size={14} className="text-[#68d3ad]" />
+                            โค้ดที่ส่ง
+                          </div>
+                          <pre className="max-h-[420px] overflow-auto whitespace-pre rounded-lg border border-white/10 bg-[#0d151a] p-4 font-mono text-xs leading-5 text-[#d7e4df]">
+                            {answer.sourceCode || "ไม่มีข้อมูลโค้ดที่ส่ง"}
+                          </pre>
+                        </div>
+
+                        <div>
+                          <div className="mb-2 flex items-center gap-2 text-[10px] font-bold text-white/55">
+                            <FileText size={14} className="text-[#f4c95d]" />
+                            ที่มาของคะแนน
+                          </div>
+                          <div className="min-h-32 whitespace-pre-line rounded-lg border border-white/10 bg-white/[0.035] p-4 text-xs leading-6 text-white/70">
+                            {answer.feedback ||
+                              "ยังไม่มีรายละเอียดการให้คะแนนสำหรับข้อนี้"}
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </section>
       );
