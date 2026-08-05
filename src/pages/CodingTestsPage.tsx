@@ -21,7 +21,7 @@ import {
   Terminal,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { EmptyState } from "../components/ui/StateViews";
 import { codingTestService } from "../services/coding-test.service";
@@ -72,18 +72,17 @@ export function CodingTestsPage({
   const [problemExpanded, setProblemExpanded] = useState(false);
   const [consoleOpen, setConsoleOpen] = useState(true);
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
-  const violationSent = useRef(false);
   const active =
     problems.find((problem) => problem.id === activeId) ?? null;
 
   const begin = async (row: StudentCodingTest) => {
     if (!row.attempts[0]) {
       const confirm = await Swal.fire({
-        icon: "warning",
+        icon: "question",
         title: row.title,
-        html: `<p>เลือกทำ ${row.requiredCount} จาก ${row.problems.length} ข้อ</p><div style="margin-top:12px;padding:12px;text-align:left;background:#fff7e2;border-radius:8px;font-size:11px"><b>ระบบคุมสอบ</b><br>สลับแท็บ พับหน้าจอ ออกจากหน้า Copy, Paste หรือ Cut จะถูกล็อกทันที</div>`,
+        html: `<p>เลือกทำ ${row.requiredCount} จาก ${row.problems.length} ข้อ</p>`,
         showCancelButton: true,
-        confirmButtonText: "รับทราบและเริ่มสอบ",
+        confirmButtonText: "เริ่มสอบ",
         cancelButtonText: "ยกเลิก",
       });
       if (!confirm.isConfirmed) return;
@@ -108,97 +107,10 @@ export function CodingTestsPage({
       setRun(null);
       setProblemOpen(true);
       setProblemExpanded(false);
-      violationSent.current = Boolean(result.attempt.lockedAt);
     } catch (error) {
       await fail(error);
     }
   };
-
-  const report = useCallback(
-    (type: string, keepalive = false) => {
-      if (
-        !attempt ||
-        violationSent.current ||
-        attempt.status !== "IN_PROGRESS"
-      )
-        return;
-      violationSent.current = true;
-      setAttempt((current) =>
-        current
-          ? {
-              ...current,
-              lockedAt: new Date().toISOString(),
-              lockReason: type,
-            }
-          : current,
-      );
-      void codingTestService
-        .violation(token, attempt.id, type, keepalive)
-        .then(setAttempt)
-        .catch(() => undefined);
-    },
-    [attempt, token],
-  );
-
-  useEffect(() => {
-    if (!attempt || attempt.status !== "IN_PROGRESS" || attempt.lockedAt)
-      return;
-    const visibility = () =>
-      document.visibilityState === "hidden" && report("TAB_HIDDEN", true);
-    const blur = () => {
-      // Focusing the embedded problem PDF can emit window.blur even though the
-      // student is still inside the exam page. Check focus on the next tick so
-      // the iframe has become document.activeElement before reporting.
-      window.setTimeout(() => {
-        if (
-          document.visibilityState === "visible" &&
-          document.activeElement instanceof HTMLIFrameElement
-        )
-          return;
-        report("WINDOW_BLUR", true);
-      }, 0);
-    };
-    const restricted = (type: string) => (event: Event) => {
-      event.preventDefault();
-      report(type);
-    };
-    const copy = restricted("COPY");
-    const paste = restricted("PASTE");
-    const cut = restricted("CUT");
-    const unload = (event: BeforeUnloadEvent) => {
-      report("PAGE_EXIT", true);
-      event.preventDefault();
-    };
-    document.addEventListener("visibilitychange", visibility);
-    window.addEventListener("blur", blur);
-    document.addEventListener("copy", copy);
-    document.addEventListener("paste", paste);
-    document.addEventListener("cut", cut);
-    window.addEventListener("beforeunload", unload);
-    return () => {
-      document.removeEventListener("visibilitychange", visibility);
-      window.removeEventListener("blur", blur);
-      document.removeEventListener("copy", copy);
-      document.removeEventListener("paste", paste);
-      document.removeEventListener("cut", cut);
-      window.removeEventListener("beforeunload", unload);
-    };
-  }, [attempt, report]);
-
-  useEffect(() => {
-    if (!attempt?.lockedAt) return;
-    const timer = window.setInterval(
-      () =>
-        void codingTestService
-          .status(token, attempt.id)
-          .then((status) => {
-            setAttempt(status);
-            if (!status.lockedAt) violationSent.current = false;
-          }),
-      5000,
-    );
-    return () => clearInterval(timer);
-  }, [attempt?.id, attempt?.lockedAt, token]);
 
   useEffect(() => {
     if (
@@ -389,7 +301,7 @@ export function CodingTestsPage({
         <header className="flex min-h-16 flex-wrap items-center gap-3 border-b border-white/10 bg-[#162129] px-3 py-2.5 sm:px-4">
           <button
             className="grid size-9 shrink-0 place-items-center rounded-lg text-white/60 transition hover:bg-white/10 hover:text-white"
-            onClick={() => report("PAGE_EXIT")}
+            onClick={() => setTest(null)}
             title="ออกจากข้อสอบ"
           >
             <X size={20} />
@@ -517,7 +429,7 @@ export function CodingTestsPage({
               </div>
               <CodeMirror
                 value={codes[active.id]}
-                height={consoleOpen ? "calc(100vh - 332px)" : "calc(100vh - 235px)"}
+                height={consoleOpen ? "calc(100vh - 410px)" : "calc(100vh - 235px)"}
                 minHeight="420px"
                 theme={vscodeDark}
                 extensions={[active.language === "PYTHON" ? python() : cpp()]}
@@ -547,23 +459,23 @@ export function CodingTestsPage({
                   )}
                 </button>
                 {consoleOpen && (
-                  <div className="grid gap-2 border-t border-white/5 p-2.5 sm:grid-cols-2 sm:p-3">
+                  <div className="grid gap-3 border-t border-white/5 p-3 md:grid-cols-[minmax(240px,40%)_minmax(0,1fr)] md:p-4">
                     <div>
-                      <label className="text-[9px] text-white/35">
+                      <label className="text-[10px] font-semibold text-white/45">
                         ข้อมูลนำเข้า (stdin)
                       </label>
                       <textarea
-                        className="mt-1 h-16 w-full resize-none rounded-md border border-white/8 bg-black/25 p-2 font-mono text-xs outline-none transition focus:border-[#68d3ad]/50"
+                        className="mt-1.5 h-32 min-h-24 w-full resize-y rounded-lg border border-white/10 bg-black/30 p-3 font-mono text-xs leading-5 outline-none transition focus:border-[#68d3ad]/60 focus:ring-1 focus:ring-[#68d3ad]/20"
                         value={stdin}
                         onChange={(event) => setStdin(event.target.value)}
                         placeholder="กรอกข้อมูลสำหรับทดลองรัน"
                       />
                     </div>
                     <div>
-                      <label className="text-[9px] text-white/35">
+                      <label className="text-[10px] font-semibold text-white/45">
                         ผลลัพธ์
                       </label>
-                      <pre className="mt-1 h-16 overflow-auto whitespace-pre-wrap rounded-md border border-white/8 bg-black/25 p-2 font-mono text-[10px] text-[#a7e8d0]">
+                      <pre className="mt-1.5 h-32 overflow-auto whitespace-pre-wrap rounded-lg border border-white/10 bg-black/30 p-3 font-mono text-xs leading-5 text-[#a7e8d0]">
                         {run
                           ? run.stdout ||
                             run.stderr ||
