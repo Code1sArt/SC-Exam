@@ -437,7 +437,7 @@ function ExamDetail({ detail }: { detail: AttemptResult }) {
                 <XCircle className="text-[#cf6857]" size={21} />
               )}
               <div>
-                <b className="text-sm leading-6">
+                <b className="whitespace-pre-wrap text-sm leading-6">
                   ข้อ {index + 1}: {item.question?.prompt}
                 </b>
                 {item.feedback && (

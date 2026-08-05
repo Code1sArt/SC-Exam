@@ -470,7 +470,7 @@ export function TakingExamPage({
               {Number(question.score)} คะแนน
             </span>
           </div>
-          <h2 className="mt-6 text-lg font-bold leading-8 sm:text-xl">
+          <h2 className="mt-6 whitespace-pre-wrap text-lg font-bold leading-8 sm:text-xl">
             {question.prompt}
           </h2>
           {question.imageUrl && (
