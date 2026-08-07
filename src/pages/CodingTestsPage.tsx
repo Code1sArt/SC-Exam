@@ -299,7 +299,7 @@ export function CodingTestsPage({
               </h2>
               <p className="mt-2 text-sm text-white/60">
                 {graded
-                  ? "คะแนนอิงจากผล Test case และคุณภาพโค้ดของแต่ละข้อ"
+                  ? "คะแนนอิงจากผล Test case รวมถึงโครงสร้างและอัลกอริทึมของแต่ละข้อ"
                   : "ออกจากหน้านี้ได้ ระบบจะประมวลผลต่ออัตโนมัติ"}
               </p>
             </div>
