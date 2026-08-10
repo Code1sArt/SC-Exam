@@ -80,7 +80,7 @@ export function CodingTestsPage({
       const confirm = await Swal.fire({
         icon: "question",
         title: row.title,
-        html: `<p>เลือกทำ ${row.requiredCount} จาก ${row.problems.length} ข้อ</p>`,
+        html: `<p>ต้องทำอย่างน้อย ${row.requiredCount} ข้อ จากโจทย์ทั้งหมด ${row.problems.length} ข้อ</p>`,
         showCancelButton: true,
         confirmButtonText: "เริ่มสอบ",
         cancelButtonText: "ยกเลิก",
@@ -171,9 +171,7 @@ export function CodingTestsPage({
     setSelected((current) =>
       current.includes(id)
         ? current.filter((value) => value !== id)
-        : current.length < (test?.requiredCount ?? 0)
-          ? [...current, id]
-          : current,
+        : [...current, id],
     );
 
   const openProblem = (id: string) => {
@@ -208,7 +206,7 @@ export function CodingTestsPage({
     if (
       !attempt ||
       !test ||
-      selected.length !== test.requiredCount ||
+      selected.length < test.requiredCount ||
       selected.some((id) => !codes[id]?.trim())
     )
       return;
@@ -380,7 +378,7 @@ export function CodingTestsPage({
           <div className="min-w-0">
             <b className="block truncate text-sm">{test.title}</b>
             <span className="block text-[10px] text-white/45">
-              เลือกแล้ว {selected.length}/{test.requiredCount} ข้อ
+              ทำแล้ว {selected.length} ข้อ (ขั้นต่ำ {test.requiredCount} ข้อ)
             </span>
           </div>
           <div
@@ -396,7 +394,7 @@ export function CodingTestsPage({
             className="flex h-10 items-center gap-2 rounded-lg bg-[#238568] px-3 text-xs font-bold transition hover:bg-[#2a9b7a] disabled:cursor-not-allowed disabled:opacity-40 sm:px-4"
             disabled={
               busy ||
-              selected.length !== test.requiredCount
+              selected.length < test.requiredCount
             }
             onClick={() => void submit()}
           >
@@ -622,8 +620,7 @@ export function CodingTestsPage({
             </p>
             <div className="mt-4 flex gap-3 border-t pt-4 text-[10px] text-[#71847d]">
               <span className="flex items-center gap-1">
-                <FileText size={14} /> เลือก {row.requiredCount}/
-                {row.problems.length} ข้อ
+                <FileText size={14} /> ขั้นต่ำ {row.requiredCount} จาก {row.problems.length} ข้อ
               </span>
               {row.durationMinutes && (
                 <span className="flex items-center gap-1">
