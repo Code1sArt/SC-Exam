@@ -288,7 +288,7 @@ export function CodingTestsPage({
               )}
               <h2 className="mt-5 text-2xl font-bold">
                 {graded
-                  ? `ได้ ${Number(attempt.score)}/${Number(attempt.maxScore)} คะแนน`
+                  ? `ได้ ${Number(attempt.score)}/${Number(test.fullScore)} คะแนน`
                   : attempt.gradingStatus === "GRADING"
                     ? "กำลังตรวจโค้ด"
                     : attempt.gradingStatus === "FAILED"
@@ -378,7 +378,7 @@ export function CodingTestsPage({
           <div className="min-w-0">
             <b className="block truncate text-sm">{test.title}</b>
             <span className="block text-[10px] text-white/45">
-              ทำแล้ว {selected.length} ข้อ (ขั้นต่ำ {test.requiredCount} ข้อ)
+              ทำแล้ว {selected.length} ข้อ (ขั้นต่ำ {test.requiredCount} ข้อ · เต็ม {Number(test.fullScore)} คะแนน)
             </span>
           </div>
           <div
@@ -629,7 +629,7 @@ export function CodingTestsPage({
               )}
               <b className="ml-auto text-[#18322d]">
                 {item?.status === "GRADED"
-                  ? `${Number(item.score)}/${Number(item.maxScore)} คะแนน`
+                  ? `${Number(item.score)}/${Number(row.fullScore)} คะแนน`
                   : item?.gradingStatus === "QUEUED" ||
                       item?.gradingStatus === "GRADING"
                     ? "อยู่ในคิวตรวจ"
