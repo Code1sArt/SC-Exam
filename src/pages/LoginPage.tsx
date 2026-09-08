@@ -1,11 +1,13 @@
 import {
   ArrowRight,
+  Eye,
+  EyeOff,
   LockKeyhole,
   ShieldCheck,
   Sparkles,
   UserRound,
 } from "lucide-react";
-import type { FormEvent, ReactNode } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import bannerImage from "../assets/lab-edu-banner.png";
 import capybaraRunning from "../assets/capybara-running.png";
 import { AppFooter } from "../components/layout/AppFooter";
@@ -94,6 +96,9 @@ function LoginField({
   autoComplete,
   minLength,
 }: LoginFieldProps) {
+  const [showPassword, setShowPassword] = useState(false);
+  const isPassword = type === "password";
+
   return (
     <label className="login-field block text-xs font-semibold text-[#415b53]" htmlFor={id}>
       {label}
@@ -103,12 +108,24 @@ function LoginField({
           className="student-input"
           id={id}
           name={id}
-          type={type}
+          type={isPassword && showPassword ? "text" : type}
           required
           minLength={minLength}
           autoComplete={autoComplete}
           placeholder={placeholder}
         />
+        {isPassword && (
+          <button
+            className="login-password-toggle"
+            type="button"
+            onClick={() => setShowPassword((current) => !current)}
+            aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
+            aria-pressed={showPassword}
+          >
+            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            {showPassword ? "ซ่อน" : "แสดง"}
+          </button>
+        )}
       </span>
     </label>
   );
