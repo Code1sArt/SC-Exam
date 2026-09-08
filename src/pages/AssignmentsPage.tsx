@@ -240,6 +240,17 @@ export function AssignmentsPage({
                 <p className="mt-4 whitespace-pre-wrap text-xs leading-6 text-[#62766f]">
                   {row.description}
                 </p>
+                {row.resourceUrl && /^https?:\/\//i.test(row.resourceUrl) && (
+                  <a
+                    className="mt-3 inline-flex items-center gap-2 rounded-lg border border-[#b9ddd0] bg-[#eff8f4] px-3 py-2 text-xs font-bold text-[#176b55] transition hover:bg-[#dff1ea]"
+                    href={row.resourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FileText size={15} /> เปิดใบงาน
+                    <ExternalLink size={13} />
+                  </a>
+                )}
                 <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-[#edf2ef] pt-4 text-[11px] text-[#71847d]">
                   <span
                     className={`inline-flex items-center gap-1.5 ${late ? "font-bold text-[#bd5d35]" : ""}`}
@@ -403,6 +414,18 @@ export function AssignmentsPage({
                     : ""
                 }`}
               >
+                {selected.resourceUrl &&
+                  /^https?:\/\//i.test(selected.resourceUrl) && (
+                    <a
+                      className="inline-flex w-fit items-center gap-2 rounded-lg border border-[#b9ddd0] bg-[#eff8f4] px-4 py-3 text-xs font-bold text-[#176b55] transition hover:bg-[#dff1ea]"
+                      href={selected.resourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FileText size={16} /> เปิดใบงาน
+                      <ExternalLink size={14} />
+                    </a>
+                  )}
                 {selected.type === "CODE" && (
                   <ProblemPdfPanel
                     title={selected.title}

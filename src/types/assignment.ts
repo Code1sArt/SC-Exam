@@ -48,6 +48,7 @@ export interface StudentAssignment {
   type: "GENERAL" | "CODE";
   codeLanguage?: "C" | "CPP" | "CSHARP" | "PYTHON" | null;
   problemPdfUrl?: string | null;
+  resourceUrl?: string | null;
   aiGradingEnabled: boolean;
   aiGradingModel?: string | null;
   isGroupWork: boolean;
