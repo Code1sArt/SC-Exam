@@ -8,7 +8,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { useState, type FormEvent, type ReactNode } from "react";
-import bannerImage from "../assets/lab-edu-banner.png";
+import bannerImage from "../assets/student-login-banner.png";
 import capybaraRunning from "../assets/capybara-running.png";
 import { AppFooter } from "../components/layout/AppFooter";
 
@@ -49,7 +49,7 @@ function LoginHero() {
     <section className="login-hero relative hidden min-h-screen overflow-hidden lg:block">
       <img
         src={bannerImage}
-        alt="ครูวายกับการศึกษายุคใหม่ด้วย AI"
+        alt="ครูคอมพิวเตอร์ในชุดซูเปอร์ฮีโร่ถือแล็ปท็อป"
         className="absolute inset-0 size-full object-cover object-[58%_center]"
       />
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,39,44,.84)_0%,rgba(0,50,56,.56)_46%,rgba(0,50,56,.08)_72%,rgba(0,50,56,.02)_100%)]" />
