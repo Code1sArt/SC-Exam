@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
+import examWaterWelcome from "../assets/exam-water-welcome.png";
 import { ExamCompanions } from "../components/exam/ExamCompanions";
 import { QuestionInput } from "../components/exam/QuestionInput";
 import { AiStatusBadge } from "../components/ui/AiStatusBadge";
@@ -48,6 +49,77 @@ const violationLabels: Record<string, string> = {
   CUT: "ตัดข้อความ",
   PAGE_EXIT: "ออกหรือปิดหน้าทำข้อสอบ",
 };
+const welcomeDrops = [
+  [5, 18, -0.15],
+  [12, 72, -0.9],
+  [19, 35, -0.45],
+  [27, 83, -1.2],
+  [35, 10, -0.7],
+  [43, 68, -1.5],
+  [52, 22, -0.25],
+  [61, 87, -1.05],
+  [69, 13, -1.35],
+  [77, 66, -0.55],
+  [85, 29, -1.7],
+  [93, 76, -0.8],
+];
+
+export function ExamWelcomeSplash({
+  leaving,
+  onDismiss,
+}: {
+  leaving: boolean;
+  onDismiss: () => void;
+}) {
+  return (
+    <main
+      className={`exam-welcome-splash ${leaving ? "is-leaving" : ""}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label="ยินดีต้อนรับเข้าสู่การทำข้อสอบ"
+    >
+      <div className="exam-water-glow" aria-hidden="true" />
+      <div className="exam-water-ring exam-water-ring-one" aria-hidden="true" />
+      <div className="exam-water-ring exam-water-ring-two" aria-hidden="true" />
+      <div className="exam-water-wave exam-water-wave-back" aria-hidden="true" />
+      <div className="exam-water-wave exam-water-wave-front" aria-hidden="true" />
+
+      <div className="exam-water-drops" aria-hidden="true">
+        {welcomeDrops.map(([left, top, delay]) => (
+          <span
+            key={`${left}-${top}`}
+            style={{
+              left: `${left}%`,
+              top: `${top}%`,
+              animationDelay: `${delay}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      <section className="exam-welcome-content">
+        <span className="exam-welcome-kicker">WELCOME TO THE EXAM</span>
+        <div className="exam-welcome-image-stage">
+          <span className="exam-welcome-burst" aria-hidden="true" />
+          <img
+            src={examWaterWelcome}
+            alt="ภาพต้อนรับสาดไปสมายด์ พร้อมปืนฉีดน้ำและเอฟเฟกต์น้ำกระเซ็น"
+          />
+        </div>
+        <div className="exam-welcome-copy">
+          <b>ตั้งสติให้ดี แล้วสาดความรู้ให้เต็มที่!</b>
+          <span>ข้อสอบพร้อมแล้ว ขอให้โชคดีกับทุกคำตอบ</span>
+        </div>
+        <button type="button" onClick={onDismiss}>
+          พร้อมลุยข้อสอบ
+          <ArrowRight size={18} aria-hidden="true" />
+        </button>
+      </section>
+
+      <div className="exam-welcome-progress" aria-hidden="true"><i /></div>
+    </main>
+  );
+}
 
 function QuestionImage({ url, prompt }: { url: string; prompt: string }) {
   const [failed, setFailed] = useState(false);
@@ -104,9 +176,33 @@ export function TakingExamPage({
   const [loading, setLoading] = useState(!active?.lockedAt);
   const [saving, setSaving] = useState(false);
   const [seconds, setSeconds] = useState<number | null>(null);
+  const [showWelcome, setShowWelcome] = useState(!active);
+  const [welcomeLeaving, setWelcomeLeaving] = useState(false);
   const violationReported = useRef(Boolean(active?.lockedAt));
   const checkingUnlock = useRef(false);
   const answerInFlight = useRef(false);
+  const manualWelcomeTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!showWelcome) return;
+    const leaveTimer = window.setTimeout(() => setWelcomeLeaving(true), 2700);
+    const hideTimer = window.setTimeout(() => setShowWelcome(false), 3300);
+    return () => {
+      window.clearTimeout(leaveTimer);
+      window.clearTimeout(hideTimer);
+      if (manualWelcomeTimer.current)
+        window.clearTimeout(manualWelcomeTimer.current);
+    };
+  }, [showWelcome]);
+
+  const dismissWelcome = () => {
+    if (welcomeLeaving) return;
+    setWelcomeLeaving(true);
+    manualWelcomeTimer.current = window.setTimeout(
+      () => setShowWelcome(false),
+      550,
+    );
+  };
 
   const finish = useCallback(
     async (id = attemptId) => {
@@ -127,6 +223,7 @@ export function TakingExamPage({
   );
 
   useEffect(() => {
+    if (showWelcome) return;
     let ignore = false;
     void (async () => {
       if (active?.lockedAt) {
@@ -173,7 +270,7 @@ export function TakingExamPage({
     return () => {
       ignore = true;
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [showWelcome]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!exam.durationMinutes || !startedAt) return;
     const update = () =>
@@ -377,6 +474,13 @@ export function TakingExamPage({
     if (result.isConfirmed) void finish();
   };
 
+  if (showWelcome)
+    return (
+      <ExamWelcomeSplash
+        leaving={welcomeLeaving}
+        onDismiss={dismissWelcome}
+      />
+    );
   if (lock)
     return (
       <LockedExamScreen
