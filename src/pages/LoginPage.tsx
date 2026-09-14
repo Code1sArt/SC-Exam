@@ -1,16 +1,18 @@
 import {
   ArrowRight,
+  BookOpenCheck,
   Eye,
   EyeOff,
+  GraduationCap,
   LockKeyhole,
   ShieldCheck,
   Sparkles,
+  Trophy,
   UserRound,
+  Zap,
 } from "lucide-react";
 import { useState, type FormEvent, type ReactNode } from "react";
-import bannerImage from "../assets/student-login-banner.png";
-import capybaraRunning from "../assets/capybara-running.png";
-import { AppFooter } from "../components/layout/AppFooter";
+import casinoTeacher from "../assets/edu-casino-teacher.png";
 
 type LoginPageProps = {
   loading: boolean;
@@ -27,63 +29,17 @@ type LoginFieldProps = {
   minLength?: number;
 };
 
-function Brand({ compact = false }: { compact?: boolean }) {
+function Brand() {
   return (
-    <div className="flex items-center gap-3">
-      <span
-        className={`grid place-items-center rounded-xl bg-white shadow-sm ${
-          compact ? "size-11 p-1.5" : "size-10 p-1 shadow-lg shadow-[#00272c]/20"
-        }`}
-      >
-        <img className="size-full object-contain" src="/lab-edu-logo.png" alt="" />
+    <div className="casino-brand">
+      <span className="casino-brand-logo">
+        <img src="/lab-edu-logo.png" alt="" />
       </span>
-      <b className={`text-lg ${compact ? "text-[#18322d]" : "text-white"}`}>
-        Lab EDU
-      </b>
+      <span>
+        <b>LAB EDU</b>
+        <small>LEARN • LEVEL UP • WIN</small>
+      </span>
     </div>
-  );
-}
-
-function LoginHero() {
-  return (
-    <section className="login-hero relative hidden min-h-screen overflow-hidden lg:block">
-      <img
-        src={bannerImage}
-        alt="ครูคอมพิวเตอร์ในชุดซูเปอร์ฮีโร่ถือแล็ปท็อป"
-        className="absolute inset-0 size-full object-cover object-[58%_center]"
-      />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,39,44,.84)_0%,rgba(0,50,56,.56)_46%,rgba(0,50,56,.08)_72%,rgba(0,50,56,.02)_100%)]" />
-
-      <span className="login-orb login-orb-one" />
-      <span className="login-orb login-orb-two" />
-      <span className="login-star login-star-one">✦</span>
-      <span className="login-star login-star-two">✦</span>
-
-      <div className="relative flex h-full max-w-xl flex-col p-12 text-white xl:p-16">
-        <Brand />
-
-        <div className="my-auto max-w-md">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-[#d5fff0] backdrop-blur-sm">
-            <Sparkles size={13} />
-            LEARNING FOR THE FUTURE
-          </span>
-          <h1 className="mt-5 text-4xl font-bold leading-[1.35] xl:text-5xl">
-            Lab EDU
-            <br />
-            การศึกษายุคใหม่
-            <br />
-            กับครู (Gen) Y
-          </h1>
-          <p className="mt-5 max-w-sm text-sm leading-7 text-white/85">
-            พื้นที่เรียนรู้และทำข้อสอบที่ช่วยให้ทุกก้าวของนักเรียนชัดเจนขึ้น
-          </p>
-        </div>
-
-        <p className="text-xs text-white/70">
-          เรียนรู้จากทุกคำตอบ ไม่ใช่แค่คะแนนปลายทาง
-        </p>
-      </div>
-    </section>
   );
 }
 
@@ -100,12 +56,11 @@ function LoginField({
   const isPassword = type === "password";
 
   return (
-    <label className="login-field block text-xs font-semibold text-[#415b53]" htmlFor={id}>
-      {label}
-      <span className="login-input-wrap mt-2">
-        {icon}
+    <label className="casino-field" htmlFor={id}>
+      <span className="casino-field-label">{label}</span>
+      <span className="casino-input-wrap">
+        <span className="casino-input-icon">{icon}</span>
         <input
-          className="student-input"
           id={id}
           name={id}
           type={isPassword && showPassword ? "text" : type}
@@ -116,14 +71,13 @@ function LoginField({
         />
         {isPassword && (
           <button
-            className="login-password-toggle"
+            className="casino-password-toggle"
             type="button"
             onClick={() => setShowPassword((current) => !current)}
             aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
             aria-pressed={showPassword}
           >
-            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-            {showPassword ? "ซ่อน" : "แสดง"}
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         )}
       </span>
@@ -131,98 +85,143 @@ function LoginField({
   );
 }
 
+function LoginHero() {
+  return (
+    <section className="casino-hero" aria-label="โปรโมชั่นการเรียน">
+      <img
+        className="casino-hero-image"
+        src={casinoTeacher}
+        alt="ผู้สอนในฉากคาสิโนสีทองสำหรับแคมเปญการศึกษา"
+      />
+      <div className="casino-hero-shade" />
+      <span className="casino-spark casino-spark-one" aria-hidden="true">✦</span>
+      <span className="casino-spark casino-spark-two" aria-hidden="true">✦</span>
+      <span className="casino-chip casino-chip-red" aria-hidden="true">A+</span>
+      <span className="casino-chip casino-chip-black" aria-hidden="true">100</span>
+
+      <div className="casino-hero-top">
+        <Brand />
+        <span className="casino-live-pill"><i /> ระบบพร้อมเรียน</span>
+      </div>
+
+      <div className="casino-hero-copy">
+        <div className="casino-eyebrow"><Sparkles size={15} /> โบนัสต้อนรับเด็กขยัน</div>
+        <h1>
+          แจ็กพอตความรู้
+          <span>โบนัสข้อสอบฟรี</span>
+          สำหรับสายขยัน!
+        </h1>
+        <p>เข้าเรียนวันนี้ รับพลังสมอง <strong>x2</strong></p>
+        <div className="casino-feature-row">
+          <span><BookOpenCheck size={16} /> ฝากโจทย์</span>
+          <i>→</i>
+          <span><Trophy size={16} /> ถอนเกรด</span>
+        </div>
+      </div>
+
+      <div className="casino-disclaimer">
+        <ShieldCheck size={17} />
+        <span><b>ไม่ใช่เว็บพนัน</b> แต่เป็นเว็บปั้นอนาคต</span>
+      </div>
+    </section>
+  );
+}
+
 function LoginForm({ loading, onLogin }: LoginPageProps) {
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     const formData = new FormData(event.currentTarget);
-    onLogin(
-      String(formData.get("identifier")),
-      String(formData.get("password")),
-    );
+    onLogin(String(formData.get("identifier")), String(formData.get("password")));
   };
 
   return (
-    <form className="login-card m-auto w-full max-w-sm" onSubmit={submit}>
-      <div className="mb-9 lg:hidden">
-        <Brand compact />
-        <p className="mt-3 text-xs font-semibold leading-5 text-[#237b63]">
-          การศึกษายุคใหม่ กับครู (Gen) Y
+    <section className="casino-login-panel">
+      <div className="casino-mobile-brand"><Brand /></div>
+
+      <form className="casino-login-card" onSubmit={submit}>
+        <div className="casino-card-kicker">
+          <span><GraduationCap size={18} /></span>
+          STUDENT MEMBER
+        </div>
+
+        <h2>ล็อกอิน แล้วลุยเลย!</h2>
+        <p className="casino-card-subtitle">โต๊ะเรียนเปิดแล้ว พร้อมโกยความรู้กลับบ้านหรือยัง?</p>
+
+        <div className="casino-reward-banner">
+          <span className="casino-reward-icon"><Zap size={22} fill="currentColor" /></span>
+          <span><small>สิทธิพิเศษวันนี้</small><b>รับพลังสมอง x2</b></span>
+          <strong>FREE</strong>
+        </div>
+
+        <div className="casino-fields">
+          <LoginField
+            id="identifier"
+            label="รหัสประจำตัวนักเรียน"
+            icon={<UserRound size={18} aria-hidden="true" />}
+            autoComplete="username"
+            placeholder="เช่น 25484"
+          />
+          <LoginField
+            id="password"
+            label="รหัสผ่าน"
+            icon={<LockKeyhole size={18} aria-hidden="true" />}
+            type="password"
+            autoComplete="current-password"
+            minLength={8}
+            placeholder="กรอกรหัสผ่าน"
+          />
+        </div>
+
+        <button
+          className="casino-submit"
+          type="submit"
+          disabled={loading}
+          aria-busy={loading}
+        >
+          {loading ? (
+            "กำลังพาเข้าสู่ห้องเรียน..."
+          ) : (
+            <>
+              <span>เข้าเรียน รับโบนัสเลย</span>
+              <ArrowRight size={20} aria-hidden="true" />
+            </>
+          )}
+        </button>
+
+        <div className="casino-trust-row">
+          <span><ShieldCheck size={14} /> ปลอดภัย</span>
+          <span><Zap size={14} /> เข้าเรียนไว</span>
+          <span><Trophy size={14} /> วัดผลจริง</span>
+        </div>
+
+        <p className="casino-fine-print">
+          เว็บไซต์เพื่อการศึกษาเท่านั้น • ไม่มีการเดิมพัน • ไม่มีการใช้เงินจริง
         </p>
-      </div>
+      </form>
 
-      <div className="login-welcome-icon" aria-hidden="true">
-        <Sparkles size={22} />
-      </div>
-      <span className="mt-5 inline-flex rounded-full bg-[#e5f6ee] px-3 py-1 text-xs font-bold text-[#237b63]">
-        สำหรับนักเรียน
-      </span>
-      <h2 className="mt-3 text-3xl font-bold text-[#18322d]">
-        กลับมาเรียนรู้กันต่อ <span className="inline-block animate-[bounce_1.8s_infinite]">👋</span>
-      </h2>
-      <p className="mt-2 text-sm leading-6 text-[#71847d]">
-        เข้าสู่ระบบเพื่อดูแบบทดสอบที่ได้รับมอบหมาย
-      </p>
-
-      <div className="mt-8 space-y-5">
-        <LoginField
-          id="identifier"
-          label="รหัสประจำตัวนักเรียน"
-          icon={<UserRound size={17} aria-hidden="true" />}
-          autoComplete="username"
-          placeholder="เช่น 25484"
-        />
-        <LoginField
-          id="password"
-          label="รหัสผ่าน"
-          icon={<LockKeyhole size={17} aria-hidden="true" />}
-          type="password"
-          autoComplete="current-password"
-          minLength={8}
-          placeholder="กรอกรหัสผ่าน"
-        />
-      </div>
-
-      <button
-        className="student-button-primary login-submit mt-7 h-12 w-full text-sm"
-        type="submit"
-        disabled={loading}
-        aria-busy={loading}
-      >
-        {loading ? (
-          "กำลังเข้าสู่ระบบ..."
-        ) : (
-          <>
-            <span>เข้าสู่ระบบ</span>
-            <ArrowRight size={17} aria-hidden="true" />
-          </>
-        )}
-      </button>
-
-      <div className="mt-5 flex items-center justify-center gap-2 text-center text-[11px] text-[#879890]">
-        <ShieldCheck size={15} className="shrink-0 text-[#4b9f80]" aria-hidden="true" />
-        <span>ข้อมูลการทำข้อสอบของคุณถูกเก็บอย่างปลอดภัย</span>
-      </div>
-    </form>
+      <footer className="casino-footer">
+        <span>© 2026 LAB EDU</span>
+        <span>เดิมพันด้วยความขยัน กำไรคืออนาคต</span>
+      </footer>
+    </section>
   );
 }
 
 export function LoginPage({ loading, onLogin }: LoginPageProps) {
   return (
-    <main className="login-page grid min-h-screen overflow-hidden bg-[#f7faf8] lg:grid-cols-[1.08fr_.92fr]">
-      <LoginHero />
-
-      <section className="login-panel relative flex min-h-screen flex-col px-6 py-10 sm:px-10">
-        <span className="login-doodle login-doodle-one" aria-hidden="true">✿</span>
-        <span className="login-doodle login-doodle-two" aria-hidden="true">✦</span>
-        <div className="login-capybara" aria-hidden="true">
-          <span className="login-capybara-shadow" />
-          <img src={capybaraRunning} alt="" />
+    <main className="casino-login-page">
+      <div className="casino-marquee" aria-label="ข้อความประชาสัมพันธ์">
+        <div>
+          <span>★ โบนัสข้อสอบฟรีสำหรับสายขยัน</span>
+          <span>ฝากโจทย์ • ถอนเกรด</span>
+          <span>เข้าเรียนวันนี้ รับพลังสมอง x2</span>
+          <span>ไม่ใช่เว็บพนัน แต่เป็นเว็บปั้นอนาคต ★</span>
         </div>
-
+      </div>
+      <div className="casino-login-grid">
+        <LoginHero />
         <LoginForm loading={loading} onLogin={onLogin} />
-        <AppFooter />
-      </section>
+      </div>
     </main>
   );
 }
