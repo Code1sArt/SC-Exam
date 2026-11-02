@@ -35,81 +35,181 @@ button:disabled { cursor: wait; opacity: .58; }
 @keyframes exam-walk-capybara { 0%, 100% { transform: translateX(-10px) translateY(0) rotate(-1deg); } 25% { transform: translateX(4px) translateY(-4px) rotate(1deg); } 50% { transform: translateX(18px) translateY(0) rotate(-1deg); } 75% { transform: translateX(4px) translateY(-3px) rotate(1deg); } }
 @keyframes exam-walk-giraffe { 0%, 100% { transform: translateX(-14px) translateY(0) rotate(-1deg); } 30% { transform: translateX(0) translateY(-3px) rotate(1deg); } 60% { transform: translateX(14px) translateY(0) rotate(-1deg); } 80% { transform: translateX(2px) translateY(-2px) rotate(1deg); } }
 @keyframes exam-walk-sloth { 0%, 100% { transform: translateX(10px) translateY(0) rotate(1deg); } 50% { transform: translateX(-14px) translateY(-3px) rotate(-2deg); } }
-/* Casino-inspired education login */
-.casino-login-page { min-height: 100dvh; overflow: hidden; background: #100002; color: #fff8e7; isolation: isolate; }
-.casino-marquee { position: relative; z-index: 20; display: flex; min-height: 2.25rem; align-items: center; overflow: hidden; border-bottom: 1px solid #ffcf5a; background: linear-gradient(90deg, #7c0307, #b90812 48%, #7c0307); box-shadow: 0 4px 18px rgb(0 0 0 / .55); color: #fff1b8; }
-.casino-marquee div { display: flex; width: 100%; align-items: center; justify-content: space-around; gap: 2.5rem; padding: .35rem 1.25rem; white-space: nowrap; font-size: .68rem; font-weight: 800; letter-spacing: .035em; }
-.casino-marquee span { display: inline-flex; align-items: center; gap: .35rem; }
-.casino-login-grid { display: grid; min-height: calc(100dvh - 2.25rem); grid-template-columns: minmax(0, 1.12fr) minmax(25rem, .88fr); }
+/* A welcoming learning space, inspired by the teacher's learning banner. */
+.learning-login-page {
+  --learning-navy: #183b61;
+  --learning-blue: #3478c5;
+  --learning-muted: #657d92;
+  position: relative;
+  display: flex;
+  min-height: 100dvh;
+  flex-direction: column;
+  overflow: clip;
+  isolation: isolate;
+  padding: 0 clamp(1.5rem, 5.5vw, 6rem);
+  background: #f7fbfe;
+  color: var(--learning-navy);
+}
+.learning-login-page::before {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background-image: radial-gradient(#a8c8df 0.7px, transparent 0.7px);
+  background-size: 24px 24px;
+  content: "";
+  opacity: .23;
+  pointer-events: none;
+  mask-image: linear-gradient(110deg, black, transparent 65%);
+}
+.learning-page-orb { position: absolute; z-index: -1; border-radius: 50%; pointer-events: none; }
+.learning-page-orb-one { top: -28rem; right: -21rem; width: 66rem; height: 66rem; background: radial-gradient(circle, #e2f4f4 0%, #eaf7f7 52%, transparent 71%); }
+.learning-page-orb-two { bottom: -27rem; left: -21rem; width: 47rem; height: 47rem; border: 1px solid #e4eef6; box-shadow: 0 0 0 3rem #eef6fb, 0 0 0 3.05rem #e5eff6, 0 0 0 6rem #f2f8fc; }
+.learning-header, .learning-login-grid, .learning-footer { width: 100%; max-width: 1240px; margin-right: auto; margin-left: auto; }
+.learning-header { display: flex; min-height: 108px; align-items: center; justify-content: space-between; gap: 1rem; }
+.learning-brand { display: inline-flex; align-items: center; gap: .7rem; }
+.learning-brand-logo { display: grid; width: 3.25rem; height: 3.25rem; place-items: center; border: 1px solid #e1ebf1; border-radius: 1rem; background: white; box-shadow: 0 4px 12px #254b6b06; }
+.learning-brand-logo img { width: 2.75rem; height: 2.75rem; object-fit: contain; }
+.learning-brand > span:last-child { display: flex; flex-direction: column; }
+.learning-brand b { font-size: 1.4rem; font-weight: 700; letter-spacing: .025em; line-height: 1.2; }
+.learning-brand b span { color: #3b8f91; }
+.learning-brand small { margin-top: .25rem; color: var(--learning-muted); font-size: .65rem; }
+.learning-header-label { display: inline-flex; align-items: center; gap: .5rem; border: 1px solid #dbe9ed; border-radius: 999px; background: #ffffff9c; padding: .55rem .9rem; color: #557789; font-size: .72rem; }
+.learning-login-grid { display: grid; flex: 1; grid-template-columns: minmax(0, 1.27fr) minmax(0, 1fr); align-items: center; gap: clamp(2.5rem, 6vw, 6rem); padding: 2.25rem 0 3.5rem; }
+.learning-hero { min-width: 0; }
+.learning-eyebrow { display: inline-flex; align-items: center; gap: .45rem; border: 1px solid #cbe9e4; border-radius: 999px; background: #eaf7f2; padding: .45rem .8rem; color: #35756b; font-size: .73rem; font-weight: 500; }
+.learning-hero h1 { position: relative; width: fit-content; margin: 1.3rem 0 0; font-size: clamp(2.15rem, 3.3vw, 3.15rem); font-weight: 700; letter-spacing: -.035em; line-height: 1.45; }
+.learning-title-highlight { position: relative; z-index: 0; color: #2a7b93; white-space: nowrap; }
+.learning-title-highlight::after { position: absolute; z-index: -1; right: -.1em; bottom: .03em; left: .03em; height: .22em; border-radius: 50% 35% 45% 30%; background: #f8d774; content: ""; transform: rotate(-1.5deg); }
+.learning-heading-spark { position: absolute; top: -.45rem; right: -2.6rem; color: #efbf46; transform: rotate(12deg); }
+.learning-hero-description { margin: 1rem 0 0; color: var(--learning-muted); font-size: .86rem; line-height: 1.9; }
+.learning-image-stage { position: relative; margin-top: 1.9rem; border: 6px solid white; border-radius: 1.3rem; background: #e6f5fc; box-shadow: 0 14px 36px #356b9520, 0 0 0 1px #dceaf4; transform: rotate(-1deg); }
+.learning-hero-image { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: .95rem; }
+.learning-image-tape { position: absolute; z-index: 1; top: -.9rem; left: 42%; width: 5rem; height: 1.6rem; background: #fae7a8b8; clip-path: polygon(3% 0, 100% 3%, 96% 98%, 0 94%); transform: rotate(-7deg); }
+.learning-image-note { position: absolute; right: 1.25rem; bottom: -1rem; display: flex; align-items: center; gap: .5rem; border: 1px solid #e6edf1; border-radius: .8rem; background: #fff; padding: .6rem .85rem; box-shadow: 0 5px 16px #254b6b0d; font-size: .7rem; font-weight: 500; transform: rotate(3deg); }
+.learning-image-note > span { display: grid; width: 1.65rem; height: 1.65rem; place-items: center; border-radius: 50%; background: #fff0e9; color: #e89c7f; }
+.learning-image-star { position: absolute; bottom: -.8rem; left: -.9rem; color: #f1c551; transform: rotate(-16deg); }
+.learning-features { display: grid; grid-template-columns: .95fr 1.15fr 1fr; gap: .8rem; margin-top: 2.5rem; }
+.learning-features > div { display: flex; align-items: center; gap: .55rem; }
+.learning-feature-icon { display: grid; width: 2.5rem; height: 2.5rem; flex: 0 0 auto; place-items: center; border-radius: .8rem; }
+.learning-feature-blue { background: #e5effb; color: #598dc9; }
+.learning-feature-mint { background: #dff1eb; color: #428d7a; }
+.learning-feature-yellow { background: #fff2d1; color: #a37c24; }
+.learning-features b, .learning-features small { display: block; }
+.learning-features b { font-size: .7rem; font-weight: 600; }
+.learning-features small { margin-top: .2rem; color: var(--learning-muted); font-size: .58rem; line-height: 1.6; }
+.learning-login-panel { position: relative; min-width: 0; width: 100%; max-width: 29rem; justify-self: end; }
+.learning-card-decoration { position: absolute; top: -1.55rem; right: 1.8rem; display: flex; align-items: center; gap: .8rem; color: #79a4ad; transform: rotate(11deg); }
+.learning-card-decoration > svg:first-child { width: 3.4rem; height: 3.4rem; border: 1px solid #d6e9e8; border-radius: 1rem; background: #e5f3ef; padding: .7rem; }
+.learning-card-decoration > svg:last-child { color: #d5ac4b; transform: rotate(-16deg); }
+.learning-login-card { border: 1px solid #e1eaf0; border-radius: 1.65rem; background: #fff; padding: 2.5rem clamp(1.5rem, 3vw, 2.6rem) 1.5rem; box-shadow: 0 20px 65px #2e658414, 0 3px 10px #2e658405; }
+.learning-card-heading { text-align: center; }
+.learning-welcome-icon { display: grid; width: 3.8rem; height: 3.8rem; place-items: center; margin: 0 auto 1.1rem; border: 1px solid #d9e8fa; border-radius: 1.2rem; background: #edf4fd; color: #4e85c4; transform: rotate(-7deg); }
+.learning-welcome-icon svg { transform: rotate(7deg); }
+.learning-card-kicker { color: #657e94; font-size: .59rem; font-weight: 600; letter-spacing: .13em; }
+.learning-card-heading h2 { margin: .6rem 0 0; font-size: clamp(1.4rem, 1.9vw, 1.8rem); font-weight: 700; letter-spacing: -.035em; line-height: 1.6; }
+.learning-card-heading h2 span { display: inline-block; margin-left: .08rem; color: #bd932a; font-size: 1.05em; font-weight: 400; }
+.learning-card-heading p { margin: .35rem 0 0; color: var(--learning-muted); font-size: .77rem; line-height: 1.7; }
+.learning-fields { display: grid; min-width: 0; gap: 1.15rem; margin: 1.9rem 0 0; border: 0; padding: 0; }
+.learning-field label { display: block; margin-bottom: .5rem; font-size: .76rem; font-weight: 600; }
+.learning-input-wrap { position: relative; display: flex; align-items: center; color: #819ab0; }
+.learning-input-wrap input { width: 100%; min-width: 0; height: 3.3rem; border: 1px solid #dce5ef; border-radius: .75rem; outline: 0; background: #f9fbfe; padding: 0 3rem; color: var(--learning-navy); font-size: .8rem; transition: border-color .18s ease, box-shadow .18s ease, background .18s ease; }
+.learning-input-wrap input::placeholder { color: #7d8da2; opacity: 1; }
+.learning-input-wrap input:hover:not(:disabled) { border-color: #b6cce2; }
+.learning-input-wrap input:focus { border-color: #5a93d2; background: #fff; box-shadow: 0 0 0 4px #eaf2fc; }
+.learning-input-wrap:focus-within .learning-input-icon { color: var(--learning-blue); }
+.learning-input-icon { position: absolute; left: 1rem; display: grid; place-items: center; pointer-events: none; }
+.learning-password-toggle { position: absolute; right: .3rem; display: grid; width: 2.75rem; height: 2.75rem; place-items: center; border: 0; border-radius: .6rem; background: transparent; color: #7d94ab; transition: color .18s ease, background .18s ease; }
+.learning-password-toggle:hover:not(:disabled) { background: #eaf1f9; color: var(--learning-blue); }
+.learning-submit { display: flex; width: 100%; min-height: 3.35rem; align-items: center; justify-content: center; gap: .8rem; margin-top: 1.5rem; border: 1px solid #3478c5; border-radius: .8rem; background: var(--learning-blue); padding: .75rem 1rem; box-shadow: 0 5px 12px #3478c526; color: #fff; font-size: .86rem; font-weight: 600; transition: background .18s ease, transform .18s ease, box-shadow .18s ease; }
+.learning-submit:hover:not(:disabled) { transform: translateY(-2px); background: #2869b2; box-shadow: 0 8px 18px #3478c530; }
+.learning-submit:active:not(:disabled) { transform: translateY(0); }
+.learning-password-toggle:focus-visible, .learning-submit:focus-visible, .learning-help summary:focus-visible { outline: 3px solid #7aafe5; outline-offset: 4px; }
+.learning-submit:disabled { opacity: .7; }
+.learning-secure-note { display: flex; align-items: center; justify-content: center; gap: .4rem; margin-top: 1rem; color: #647f80; font-size: .65rem; }
+.learning-secure-note svg { color: #5c9a8c; }
+.learning-help { margin-top: 1.5rem; border-top: 1px dashed #dfe8ee; padding-top: 1.1rem; }
+.learning-help summary { display: flex; width: fit-content; align-items: center; justify-content: center; gap: .4rem; margin: 0 auto; border-radius: .25rem; color: #637f98; font-size: .72rem; cursor: pointer; list-style: none; }
+.learning-help summary::-webkit-details-marker { display: none; }
+.learning-help summary:hover { color: var(--learning-blue); }
+.learning-help summary svg { transition: transform .18s ease; }
+.learning-help details[open] summary svg { transform: rotate(180deg); }
+.learning-help details p { margin: .9rem 0 0; border-radius: .6rem; background: #f2f7fc; padding: .85rem; color: #5d758c; font-size: .72rem; line-height: 1.9; }
+.learning-encouragement { display: flex; align-items: center; justify-content: center; gap: .7rem; margin: 1.35rem .5rem 0; padding: .85rem .6rem; }
+.learning-tip-icon { display: grid; width: 2.5rem; height: 2.5rem; flex-shrink: 0; place-items: center; border-radius: 50%; background: #fff3d3; color: #a7802b; }
+.learning-encouragement b { display: block; color: #5f7585; font-size: .72rem; font-weight: 500; line-height: 1.8; }
+.learning-encouragement p { margin: .1rem 0 0; color: #738797; font-size: .65rem; line-height: 1.8; }
+.learning-footer { display: flex; min-height: 65px; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; border-top: 1px solid #e0eaf1; padding: 1rem 0; color: #6f8396; font-size: .64rem; }
+.learning-footer > span { display: inline-flex; align-items: center; gap: .4rem; }
+.learning-footer-divider { margin: 0 .3rem; color: #b0c4d2; }
+.learning-footer svg { color: #d49583; }
+.learning-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.learning-loading-spinner { animation: learning-spin 1s linear infinite; }
+@keyframes learning-spin { to { transform: rotate(360deg); } }
 
-.casino-hero { position: relative; min-height: 42rem; overflow: hidden; border-right: 1px solid rgb(255 203 81 / .38); background: #280004; }
-.casino-hero::before { position: absolute; z-index: 3; inset: 0; border: 1px solid rgb(255 224 142 / .12); content: ""; pointer-events: none; }
-.casino-hero::after { position: absolute; z-index: 2; right: -8rem; bottom: -8rem; width: 24rem; height: 24rem; border: 1px solid rgb(255 212 102 / .24); border-radius: 50%; box-shadow: 0 0 0 1.6rem rgb(255 194 61 / .05), 0 0 0 3.2rem rgb(255 194 61 / .035); content: ""; }
-.casino-hero-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 48%; transform: scale(1.015); }
-.casino-hero-shade { position: absolute; z-index: 1; inset: 0; background: linear-gradient(90deg, rgb(19 0 2 / .94) 0%, rgb(35 0 2 / .75) 34%, rgb(35 0 2 / .12) 72%), linear-gradient(0deg, rgb(16 0 2 / .9) 0%, transparent 43%, rgb(21 0 2 / .26) 100%); }
-.casino-hero-top { position: absolute; z-index: 5; top: clamp(1.5rem, 4vw, 3rem); right: clamp(1.5rem, 4vw, 3.75rem); left: clamp(1.5rem, 4vw, 3.75rem); display: flex; align-items: center; justify-content: space-between; }
-.casino-brand { display: inline-flex; align-items: center; gap: .75rem; color: #fff9e9; }
-.casino-brand-logo { display: grid; width: 2.9rem; height: 2.9rem; place-items: center; border: 1px solid #ffd774; border-radius: .85rem; background: linear-gradient(145deg, #fffef6, #ffe8a6); box-shadow: 0 0 0 4px rgb(255 203 72 / .1), 0 8px 24px rgb(0 0 0 / .28); }
-.casino-brand-logo img { width: 2.25rem; height: 2.25rem; object-fit: contain; }
-.casino-brand > span:last-child { display: flex; flex-direction: column; }
-.casino-brand b { color: #fff; font-size: 1.05rem; font-weight: 800; letter-spacing: .04em; line-height: 1.15; }
-.casino-brand small { margin-top: .25rem; color: #ffd875; font-size: .52rem; font-weight: 800; letter-spacing: .14em; }
-.casino-live-pill { display: inline-flex; align-items: center; gap: .5rem; border: 1px solid rgb(255 229 152 / .28); border-radius: 999px; background: rgb(27 0 2 / .62); padding: .5rem .75rem; color: #ffeab2; font-size: .62rem; font-weight: 700; backdrop-filter: blur(10px); }
-.casino-live-pill i { width: .45rem; height: .45rem; border-radius: 50%; background: #6dff81; box-shadow: 0 0 10px #6dff81; animation: casino-pulse 1.8s ease-in-out infinite; }
-
-.casino-hero-copy { position: absolute; z-index: 5; bottom: clamp(5.5rem, 12vh, 8.25rem); left: clamp(1.5rem, 5.2vw, 5rem); width: min(32rem, 64%); text-shadow: 0 3px 20px rgb(0 0 0 / .75); }
-.casino-eyebrow { display: inline-flex; align-items: center; gap: .45rem; border: 1px solid rgb(255 222 134 / .45); border-radius: 999px; background: rgb(122 0 7 / .72); padding: .45rem .8rem; color: #ffe595; font-size: .68rem; font-weight: 800; letter-spacing: .04em; backdrop-filter: blur(9px); }
-.casino-hero-copy h1 { margin: .9rem 0 0; color: #fff; font-size: clamp(2.45rem, 4.4vw, 4.75rem); font-weight: 800; letter-spacing: -.045em; line-height: 1.04; }
-.casino-hero-copy h1 span { display: block; background: linear-gradient(180deg, #fff7c9 0%, #ffd056 48%, #ef9200 100%); background-clip: text; -webkit-background-clip: text; color: transparent; filter: drop-shadow(0 3px 0 #781006); }
-.casino-hero-copy > p { margin: .8rem 0 0; color: #fff2cf; font-size: clamp(.95rem, 1.45vw, 1.2rem); font-weight: 600; }
-.casino-hero-copy > p strong { display: inline-block; margin-left: .2rem; color: #ffd04e; font-size: 1.7em; font-weight: 900; line-height: .8; transform: rotate(-3deg); }
-.casino-feature-row { display: flex; align-items: center; gap: .65rem; margin-top: 1.1rem; }
-.casino-feature-row span { display: inline-flex; align-items: center; gap: .4rem; border: 1px solid rgb(255 220 126 / .28); border-radius: .6rem; background: rgb(16 0 2 / .58); padding: .52rem .7rem; color: #fff5d8; font-size: .68rem; font-weight: 800; backdrop-filter: blur(8px); }
-.casino-feature-row i { color: #ffc844; font-size: 1.1rem; font-style: normal; }
-.casino-disclaimer { position: absolute; z-index: 5; right: clamp(1.5rem, 4vw, 3.75rem); bottom: 1.6rem; left: clamp(1.5rem, 4vw, 3.75rem); display: flex; align-items: center; gap: .55rem; border-top: 1px solid rgb(255 221 131 / .25); padding-top: .95rem; color: #f5dfb3; font-size: .72rem; }
-.casino-disclaimer b { color: #fff; }
-.casino-spark { position: absolute; z-index: 4; color: #fff4b2; line-height: 1; text-shadow: 0 0 9px #fff, 0 0 24px #ffbd23; animation: casino-twinkle 2.4s ease-in-out infinite; }
-.casino-spark-one { top: 24%; left: 43%; font-size: 1.8rem; }
-.casino-spark-two { top: 14%; right: 12%; font-size: 1.15rem; animation-delay: -1.2s; }
-.casino-chip { position: absolute; z-index: 4; display: grid; width: 3.2rem; height: 3.2rem; place-items: center; border: .38rem dotted #fff0bd; border-radius: 50%; color: white; font-size: .55rem; font-weight: 900; box-shadow: 0 8px 18px rgb(0 0 0 / .35), inset 0 0 0 2px rgb(255 255 255 / .4); }
-.casino-chip-red { top: 27%; right: 4%; background: #c7131d; transform: rotate(18deg); }
-.casino-chip-black { bottom: 18%; right: 10%; background: #171313; transform: rotate(-13deg); }
-
-.casino-login-panel { position: relative; display: flex; min-width: 0; flex-direction: column; justify-content: center; overflow: hidden; padding: 2.5rem clamp(1.5rem, 4vw, 4.5rem) 1.5rem; background: radial-gradient(circle at 93% 9%, rgb(173 10 20 / .32), transparent 17rem), radial-gradient(circle at 0% 100%, rgb(255 171 36 / .12), transparent 21rem), linear-gradient(145deg, #1b0204 0%, #0e0001 58%, #1a0203 100%); }
-.casino-login-panel::before { position: absolute; inset: 0; background-image: linear-gradient(rgb(255 213 105 / .025) 1px, transparent 1px), linear-gradient(90deg, rgb(255 213 105 / .025) 1px, transparent 1px); background-size: 32px 32px; content: ""; pointer-events: none; }
-.casino-login-panel::after { position: absolute; top: 8%; right: -8rem; width: 18rem; height: 18rem; border: 1px solid rgb(255 198 56 / .1); border-radius: 50%; box-shadow: 0 0 0 1.4rem rgb(255 198 56 / .025), 0 0 0 2.8rem rgb(255 198 56 / .018); content: ""; }
-.casino-mobile-brand { position: relative; z-index: 2; display: none; margin-bottom: 1.5rem; }
-.casino-login-card { position: relative; z-index: 2; width: 100%; max-width: 27rem; margin: auto; border: 1px solid rgb(255 208 82 / .44); border-radius: 1.3rem; background: linear-gradient(160deg, rgb(59 4 8 / .86), rgb(19 1 2 / .94)); padding: clamp(1.6rem, 3.2vw, 2.4rem); box-shadow: 0 28px 70px rgb(0 0 0 / .48), inset 0 1px 0 rgb(255 255 255 / .06), 0 0 42px rgb(166 7 17 / .1); backdrop-filter: blur(18px); animation: casino-card-enter .7s cubic-bezier(.2,.8,.25,1) both; }
-.casino-login-card::before { position: absolute; top: -.38rem; right: 12%; left: 12%; height: .38rem; border-radius: 999px 999px 0 0; background: linear-gradient(90deg, transparent, #ffcf5e 28%, #fff4b0 50%, #ffcf5e 72%, transparent); content: ""; box-shadow: 0 0 18px rgb(255 190 50 / .42); }
-.casino-card-kicker { display: flex; align-items: center; gap: .6rem; color: #ffd66d; font-size: .62rem; font-weight: 900; letter-spacing: .15em; }
-.casino-card-kicker span { display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border: 1px solid rgb(255 214 106 / .3); border-radius: .65rem; background: rgb(255 199 55 / .1); }
-.casino-login-card h2 { margin: 1rem 0 0; color: #fff; font-size: clamp(1.7rem, 2.3vw, 2.25rem); font-weight: 800; letter-spacing: -.035em; line-height: 1.2; }
-.casino-card-subtitle { margin: .45rem 0 0; color: #bba8a6; font-size: .75rem; line-height: 1.6; }
-.casino-reward-banner { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .7rem; margin-top: 1.35rem; border: 1px solid rgb(255 207 82 / .26); border-radius: .8rem; background: linear-gradient(90deg, rgb(118 8 14 / .78), rgb(60 3 6 / .62)); padding: .65rem .75rem; }
-.casino-reward-icon { display: grid; width: 2.35rem; height: 2.35rem; place-items: center; border-radius: .65rem; background: linear-gradient(145deg, #ffe58f, #eaa20c); color: #691006; box-shadow: 0 5px 16px rgb(0 0 0 / .22); }
-.casino-reward-banner > span:nth-child(2) { display: flex; min-width: 0; flex-direction: column; }
-.casino-reward-banner small { color: #ceb6ad; font-size: .58rem; font-weight: 600; }
-.casino-reward-banner b { color: #fff0b8; font-size: .8rem; }
-.casino-reward-banner > strong { border: 1px solid #ffe494; border-radius: 999px; background: #ae0e16; padding: .28rem .52rem; color: #fff1bd; font-size: .58rem; letter-spacing: .08em; }
-.casino-fields { display: grid; gap: 1rem; margin-top: 1.4rem; }
-.casino-field { display: block; }
-.casino-field-label { display: block; margin-bottom: .45rem; color: #eadbd0; font-size: .68rem; font-weight: 700; }
-.casino-input-wrap { position: relative; display: flex; align-items: center; color: #c59b53; }
-.casino-input-wrap input { width: 100%; height: 3.1rem; border: 1px solid #563438; border-radius: .7rem; outline: 0; background: rgb(7 0 1 / .62); padding: 0 3rem; color: #fff; font-size: .78rem; transition: .18s ease; }
-.casino-input-wrap input::placeholder { color: #796367; }
-.casino-input-wrap input:focus { border-color: #e9b53c; box-shadow: 0 0 0 3px rgb(239 183 57 / .13), inset 0 0 16px rgb(255 197 54 / .025); }
-.casino-input-icon { position: absolute; z-index: 1; left: .9rem; display: grid; place-items: center; pointer-events: none; }
-.casino-password-toggle { position: absolute; z-index: 1; right: .75rem; display: grid; width: 2rem; height: 2rem; place-items: center; border: 0; border-radius: .45rem; background: transparent; color: #b99655; }
-.casino-password-toggle:hover, .casino-password-toggle:focus-visible { background: rgb(255 205 77 / .1); color: #ffd86c; outline: 0; }
-.casino-submit { display: flex; width: 100%; height: 3.15rem; align-items: center; justify-content: center; gap: .65rem; margin-top: 1.35rem; border: 1px solid #fff0ad; border-radius: .72rem; background: linear-gradient(180deg, #ffe477 0%, #f9b828 56%, #d48700 100%); box-shadow: 0 7px 0 #753504, 0 13px 24px rgb(0 0 0 / .33), inset 0 1px 0 white; color: #4b1400; font-size: .83rem; font-weight: 900; text-shadow: 0 1px rgb(255 255 255 / .32); transition: transform .16s ease, filter .16s ease, box-shadow .16s ease; }
-.casino-submit:hover:not(:disabled) { filter: brightness(1.08) saturate(1.08); transform: translateY(-2px); box-shadow: 0 9px 0 #753504, 0 16px 30px rgb(0 0 0 / .4), inset 0 1px 0 white; }
-.casino-submit:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 3px 0 #753504, 0 8px 16px rgb(0 0 0 / .32), inset 0 1px 0 white; }
-.casino-submit:focus-visible { outline: 3px solid rgb(255 230 144 / .32); outline-offset: 3px; }
-.casino-trust-row { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1.15rem; color: #c3aba2; font-size: .59rem; font-weight: 600; }
-.casino-trust-row span { display: inline-flex; align-items: center; gap: .3rem; }
-.casino-trust-row svg { color: #e8b64d; }
-.casino-fine-print { margin: .95rem 0 0; border-top: 1px solid rgb(255 255 255 / .07); padding-top: .85rem; color: #806b69; font-size: .55rem; line-height: 1.5; text-align: center; }
-.casino-footer { position: relative; z-index: 2; display: flex; width: 100%; max-width: 27rem; justify-content: space-between; gap: 1rem; margin: 1.5rem auto 0; color: #705b5c; font-size: .55rem; }
+@media (min-width: 1600px) {
+  .learning-login-grid { max-width: 1320px; }
+  .learning-hero h1 { font-size: 3.4rem; }
+  .learning-hero-description { font-size: .95rem; }
+}
+@media (min-width: 901px) and (max-width: 1100px) {
+  .learning-login-page { padding-right: 2rem; padding-left: 2rem; }
+  .learning-login-grid { gap: 2rem; }
+  .learning-features { gap: .6rem; }
+  .learning-features > div { align-items: flex-start; flex-direction: column; }
+  .learning-heading-spark { right: -1.9rem; width: 1.6rem; }
+  .learning-login-card { padding-right: 1.5rem; padding-left: 1.5rem; }
+}
+@media (max-width: 900px) {
+  .learning-header { min-height: 96px; }
+  .learning-login-grid { max-width: 620px; grid-template-columns: minmax(0, 1fr); gap: 3.5rem; padding-top: 1.25rem; }
+  .learning-hero { display: contents; }
+  .learning-eyebrow { grid-row: 1; justify-self: center; }
+  .learning-hero h1 { grid-row: 2; justify-self: center; margin-top: -2.5rem; font-size: clamp(2rem, 5.7vw, 3rem); text-align: center; }
+  .learning-hero-description { grid-row: 3; margin-top: -2.75rem; text-align: center; }
+  .learning-login-panel { grid-row: 4; max-width: 29rem; justify-self: center; margin-top: -1rem; }
+  .learning-image-stage { grid-row: 5; margin-top: -.5rem; }
+  .learning-features { grid-row: 6; margin-top: -1rem; }
+  .learning-footer { justify-content: center; text-align: center; }
+}
+@media (max-width: 520px) {
+  .learning-login-page { padding-right: 1.25rem; padding-left: 1.25rem; }
+  .learning-header { min-height: 90px; }
+  .learning-brand { gap: .55rem; }
+  .learning-brand-logo { width: 2.8rem; height: 2.8rem; border-radius: .85rem; }
+  .learning-brand-logo img { width: 2.4rem; height: 2.4rem; }
+  .learning-brand b { font-size: 1.2rem; }
+  .learning-brand small { font-size: .6rem; }
+  .learning-header-label { width: 2.3rem; height: 2.3rem; justify-content: center; overflow: hidden; border-color: #dbe9ed; padding: 0; font-size: 0; }
+  .learning-header-label svg { flex-shrink: 0; }
+  .learning-login-grid { gap: 3rem; padding-top: 1rem; padding-bottom: 2rem; }
+  .learning-eyebrow { font-size: .64rem; }
+  .learning-hero h1 { margin-top: -2rem; font-size: clamp(1.65rem, 7.5vw, 2.35rem); }
+  .learning-heading-spark { top: -.15rem; right: -1.6rem; width: 1.4rem; height: 1.9rem; }
+  .learning-hero-description { margin-top: -2rem; font-size: .74rem; }
+  .learning-desktop-break { display: none; }
+  .learning-login-panel { margin-top: -.75rem; }
+  .learning-card-decoration { top: -1.2rem; right: 1rem; }
+  .learning-card-decoration > svg:first-child { width: 2.8rem; height: 2.8rem; padding: .6rem; border-radius: .85rem; }
+  .learning-login-card { border-radius: 1.3rem; padding: 2rem 1.4rem 1.35rem; }
+  .learning-card-heading h2 { font-size: 1.55rem; }
+  .learning-card-heading p { font-size: .74rem; }
+  .learning-input-wrap input { font-size: 1rem; }
+  .learning-input-wrap input::placeholder { font-size: .76rem; }
+  .learning-fields { margin-top: 1.5rem; }
+  .learning-encouragement { margin-right: 0; margin-left: 0; padding-right: 0; padding-left: 0; }
+  .learning-encouragement b { font-size: .65rem; }
+  .learning-encouragement p { font-size: .6rem; }
+  .learning-image-stage { margin-top: -1rem; border-width: 4px; border-radius: 1rem; }
+  .learning-hero-image { border-radius: .7rem; }
+  .learning-image-note { right: .4rem; padding: .4rem .55rem; font-size: .6rem; }
+  .learning-image-note > span { width: 1.4rem; height: 1.4rem; }
+  .learning-features { gap: .75rem; margin-top: -.5rem; }
+  .learning-features > div { flex-direction: column; align-items: flex-start; }
+  .learning-features b { font-size: .66rem; }
+  .learning-features small { font-size: .56rem; }
+  .learning-footer { flex-direction: column; gap: .55rem; font-size: .58rem; }
+  .learning-footer-divider { margin: 0 .1rem; }
+}
 
 /* Full-screen water welcome before a fresh exam attempt */
 .exam-welcome-splash { position: fixed; z-index: 9999; inset: 0; display: grid; min-width: 320px; place-items: center; overflow: hidden; background: radial-gradient(circle at 50% 42%, #0c92c8 0%, #045784 29%, #012b4c 58%, #00111f 100%); color: white; isolation: isolate; opacity: 1; transition: opacity .55s ease, filter .55s ease, transform .55s cubic-bezier(.2,.8,.2,1); animation: exam-splash-enter .55s cubic-bezier(.15,.85,.25,1) both; }
@@ -162,48 +262,6 @@ button:disabled { cursor: wait; opacity: .58; }
   .exam-welcome-copy b { font-size: 1rem; }
   .exam-welcome-content button { height: 2.75rem; margin-top: .85rem; }
   .exam-water-wave { height: 23vh; }
-}
-
-@keyframes casino-pulse { 0%, 100% { opacity: .45; transform: scale(.8); } 50% { opacity: 1; transform: scale(1); } }
-@keyframes casino-twinkle { 0%, 100% { opacity: .3; transform: scale(.7) rotate(0); } 50% { opacity: 1; transform: scale(1.12) rotate(16deg); } }
-@keyframes casino-card-enter { from { opacity: 0; transform: translateY(18px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-
-@media (max-width: 1023px) {
-  .casino-login-page { overflow: auto; }
-  .casino-marquee div { width: max-content; justify-content: flex-start; animation: casino-marquee 26s linear infinite; }
-  .casino-login-grid { display: block; min-height: 0; }
-  .casino-hero { min-height: 30rem; border-right: 0; border-bottom: 1px solid rgb(255 203 81 / .38); }
-  .casino-hero-top .casino-brand { display: none; }
-  .casino-hero-top { justify-content: flex-end; }
-  .casino-hero-image { object-position: 50% 42%; }
-  .casino-hero-copy { bottom: 5.25rem; width: min(31rem, 70%); }
-  .casino-hero-copy h1 { font-size: clamp(2.6rem, 8vw, 4.5rem); }
-  .casino-login-panel { min-height: 42rem; padding-top: 2rem; }
-  .casino-mobile-brand { display: block; width: 100%; max-width: 27rem; margin-right: auto; margin-left: auto; }
-  .casino-login-card { margin-top: 0; }
-  @keyframes casino-marquee { to { transform: translateX(-42%); } }
-}
-
-@media (max-width: 639px) {
-  .casino-marquee div { gap: 2rem; font-size: .61rem; }
-  .casino-hero { min-height: 25rem; }
-  .casino-hero-image { object-position: 52% 42%; }
-  .casino-hero-shade { background: linear-gradient(90deg, rgb(19 0 2 / .88), rgb(35 0 2 / .18) 90%), linear-gradient(0deg, rgb(16 0 2 / .9), transparent 58%); }
-  .casino-hero-top { top: 1.1rem; right: 1rem; left: 1rem; }
-  .casino-live-pill { padding: .4rem .6rem; }
-  .casino-hero-copy { bottom: 4.6rem; left: 1.1rem; width: calc(100% - 2.2rem); }
-  .casino-eyebrow { padding: .35rem .6rem; font-size: .58rem; }
-  .casino-hero-copy h1 { margin-top: .65rem; font-size: clamp(2.05rem, 10.5vw, 2.85rem); }
-  .casino-hero-copy > p { margin-top: .55rem; font-size: .8rem; }
-  .casino-feature-row { margin-top: .7rem; }
-  .casino-feature-row span { padding: .4rem .55rem; font-size: .6rem; }
-  .casino-disclaimer { right: 1.1rem; bottom: 1rem; left: 1.1rem; padding-top: .7rem; font-size: .62rem; }
-  .casino-spark, .casino-chip { display: none; }
-  .casino-login-panel { min-height: 0; padding: 1.5rem 1rem 1.2rem; }
-  .casino-mobile-brand { margin-bottom: 1.25rem; }
-  .casino-login-card { border-radius: 1.05rem; padding: 1.4rem 1.2rem; }
-  .casino-trust-row { gap: .55rem; }
-  .casino-footer { flex-direction: column; align-items: center; margin-top: 1.25rem; }
 }
 
 @media (max-width: 639px) { .exam-companions-track { height: 5.8rem; } .exam-capybara { left: 3%; width: 4.8rem; height: 4.8rem; } .exam-giraffe { width: 3.8rem; height: 5.2rem; } .exam-sloth { right: 2%; width: 4.8rem; height: 4rem; } .exam-cloud-two, .exam-grass-two { display: none; } }
